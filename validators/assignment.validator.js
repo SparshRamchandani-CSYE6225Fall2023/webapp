@@ -20,6 +20,11 @@ const  validatePostRequest= (req)=>{
     isError=true;
     errorMessage+="The deadline is required and should be in the format 16-08-29T09:12:33.001Z";
  }
+ const currentTimestamp = new Date().toISOString();
+  if (deadline <= currentTimestamp) {
+    isError = true;
+    errorMessage += "The deadline should be ahead of the current date\n";
+  }
 
 //  addValidation for assignment_craeted and assignment_updated and user_id
 
@@ -31,7 +36,7 @@ const  validateUpdateRequest= (req)=>{
    const {name,points,num_of_attemps,deadline}=req.body;
    let isError=false;
    let errorMessage="";
-   if(!_.isNil(name) && !_.isEmpty(name)){
+   if(_.isNil(name) || _.isEmpty(name)){
       isError=true;
       errorMessage+="Name cannot be null or empty\n";
    }
@@ -48,6 +53,11 @@ const  validateUpdateRequest= (req)=>{
       isError=true;
       errorMessage+="The deadline is required and should be in the format 016-08-29T09:12:33.001Z";
    }
+   const currentTimestamp = new Date().toISOString();
+  if (deadline <= currentTimestamp) {
+    isError = true;
+    errorMessage += "The deadline should be ahead of the current date\n";
+  }
 
 
 //  addValidation for assignment_craeted and assignment_updated and user_id
