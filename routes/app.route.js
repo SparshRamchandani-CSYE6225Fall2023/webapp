@@ -1,10 +1,14 @@
 import sequelize from "../sequelize.js";
 
 const checkHealth = async (req, res) => {
+  if (req.method !== 'GET'){
+    return res.status(405).send();
+  }
   const length = req.headers['content-length'];
   if ((req.method === 'GET' && length > 0) || req.url.includes('?')) {
     res.status(400).send();
-  } else {
+  }
+   else {
     try {
       await sequelize.authenticate();
       res.set('Cache-control', 'no-cache');

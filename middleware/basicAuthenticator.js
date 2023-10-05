@@ -17,20 +17,23 @@ export default async (req,res,next)=>{
 
 
     if(!_.isEmpty(username) && !_.isEmpty(password)){
-        
-        let authUser=await db.users.findOne({ where:{
-            email:username,
-        }});
-         const isMatch= await bcrypt.compare(password,authUser?.password);
-        if(!isMatch){
-            res.setHeader('WWW-Authenticate', 'Basic');
+        try{
+            let authUser=await db.users.findOne({ where:{
+                email:username,
+            }});
+             const isMatch= await bcrypt.compare(password,authUser?.password);
+            if(!isMatch){
+                res.setHeader('WWW-Authenticate', 'Basic');
+                return res.status(401).json({error:"You are not authorized user"});
+      
+            }
+            req.authUser=authUser.dataValues;
+            console.log(req.authUser,"<-- this is auth user");
+            delete req.authUser?.password;
+        }catch(err){
+            console.log(err);
             return res.status(401).json({error:"You are not authorized user"});
-  
-        }
-        req.authUser=authUser.dataValues;
-        console.log(req.authUser,"<-- this is auth user");
-        delete req.authUser?.password;
-       
+        }      
     }else{
          //Authentication header is missing
          res.setHeader('WWW-Authenticate', 'Basic');
