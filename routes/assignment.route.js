@@ -18,7 +18,7 @@ assignmentRouter.use("/", async(req,res,next)=>{
 })
   
 
-assignmentRouter.get("/", queryParameterValidators, async (req, res) => {
+assignmentRouter.get("/",basicAuthenticator, queryParameterValidators, async (req, res) => {
   // add Validation for the user who create the assignments can only see his assignments
 //   queryParameterValidators(req, res);
   const assignmentList = await assignmentDb.findAll({
@@ -28,7 +28,7 @@ assignmentRouter.get("/", queryParameterValidators, async (req, res) => {
   res.status(200).json(assignmentList);
 });
 
-assignmentRouter.get("/:id", queryParameterValidators,async (req, res) => {
+assignmentRouter.get("/:id",basicAuthenticator, queryParameterValidators,async (req, res) => {
   const { id: assignmentId } = req.params;
   const assignmentInfo = await db.assignments.findOne({
     attributes: { exclude: ["user_id"] },
