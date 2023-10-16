@@ -56,7 +56,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      
+
       "sudo tar -xvf /home/my-app.zip -C /home",
       "sudo ls /home",
     ]
