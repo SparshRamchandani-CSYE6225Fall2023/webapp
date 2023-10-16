@@ -58,7 +58,7 @@ build {
     inline = [
 
       # "sudo tar -xvf /home/webapp.zip -C /home",
-      "echo 'hello home'"
+      "echo 'hello home'",
       "sudo ls /home",
     ]
   }
