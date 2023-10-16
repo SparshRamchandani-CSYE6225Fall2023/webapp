@@ -47,8 +47,8 @@ build {
       "sudo /home/setup.sh",
       # "expect -c 'setup.sh; expect \"Enter Password:\"; send \"postgres\n\"; interact'",
       # "expect -c 'setup.sh; expect \"Please answer \"y\" or \"n\": \" ; send \"y\n\"; interact'"
+      "sudo unzip /home/my-app -d /home",
       "sudo ls /home",
-      "sudo unzip /home/my-app.zip -d /home",
       "sudo la /home/webapp-updated",
     ]
   }
