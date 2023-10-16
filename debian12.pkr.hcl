@@ -33,6 +33,7 @@ build {
 
   provisioner "shell" {
     inline = [
+      "chmod -R +rwx /home",
       "chmod +x /home/setup.sh",
       "sudo /home/setup.sh",
       "sudo apt-get install -y unzip",
