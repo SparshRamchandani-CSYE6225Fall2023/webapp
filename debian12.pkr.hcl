@@ -23,22 +23,22 @@ build {
 
   provisioner "file" {
     source      = "setup.sh"
-    destination = "/root/setup.sh"
+    destination = "/home/setup.sh"
   }
 
   provisioner "file" {
     source      = "/home/runner/work/webapp-updated/webapp-updated"
-    destination = "/root/my-app.zip"
+    destination = "/home/my-app.zip"
   }
 
   provisioner "shell" {
     inline = [
-      "chmod +x /root/setup.sh",
-      "sudo /root/setup.sh",
+      "chmod +x /home/setup.sh",
+      "sudo /home/setup.sh",
       "sudo apt-get install -y unzip",
-      "sudo unzip /root/my-app.zip",
-      "sudo ls /root",
-      "sudo ls /root/my-app",
+      "sudo unzip /home/my-app.zip",
+      "sudo ls /home",
+      "sudo ls /home/my-app",
     ]
   }
 
