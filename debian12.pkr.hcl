@@ -43,12 +43,12 @@ build {
       "sudo apt-get update",
       "sudo apt-get install -y expect",
       "sudo apt-get install -y unzip",
-      "sudo unzip /home/my-app.zip -d /home",
       "sudo chmod +x /home/setup.sh",
       "sudo /home/setup.sh",
       # "expect -c 'setup.sh; expect \"Enter Password:\"; send \"postgres\n\"; interact'",
       # "expect -c 'setup.sh; expect \"Please answer \"y\" or \"n\": \" ; send \"y\n\"; interact'"
       "sudo ls /home",
+      "sudo unzip /home/my-app.zip -d /home",
       "sudo la /home/webapp-updated",
     ]
   }
