@@ -28,7 +28,7 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "echo 'build complete !!! ur debian ami is ready'"
+      "echo 'Build Successful !!! Your debian AMI is ready'"
     ]
   }
 }

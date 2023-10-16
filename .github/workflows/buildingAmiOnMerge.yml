@@ -22,7 +22,7 @@ jobs:
           packer --version
 
       - name: Initialize Packer
-        run: packer init main.pkr.hcl
+        run: packer init debian12.pkr.hcl
 
       - name: Build Custom AMI
         env:
