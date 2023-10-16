@@ -32,5 +32,5 @@ nodejs -v
 
 # Configure PostgreSQL: set password, create database, and create user
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
-sudo -u postgres createdb your_database
-sudo -u postgres createuser --interactive --pwprompt your_user
+# sudo -u postgres createdb postgres
+# sudo -u postgres createuser --interactive --pwprompt postgres
