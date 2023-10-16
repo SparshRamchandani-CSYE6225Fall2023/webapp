@@ -1,9 +1,41 @@
+# name: Build AMI after PR Merge
+
+# on:
+#   push:
+#     branches:
+#       - ami-feature1    #branch name change
+
+# jobs:
+#   build-ami:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v2
+
+#       - name: Install Packer
+#         run: |
+#           PACKER_VERSION="1.9.4"  # Specify your desired version
+#           wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+#           unzip packer_${PACKER_VERSION}_linux_amd64.zip
+#           sudo mv packer /usr/local/bin/
+#           packer --version
+
+#       - name: Initialize Packer
+#         run: packer init debian12.pkr.hcl
+
+#       - name: Build Custom AMI
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         run: packer build debian12.pkr.hcl
+
 name: Build AMI after PR Merge
 
 on:
   push:
     branches:
-      - ami-feature1    #branch name change
+      - ami-feature1
 
 jobs:
   build-ami:
@@ -15,7 +47,7 @@ jobs:
 
       - name: Install Packer
         run: |
-          PACKER_VERSION="1.9.4"  # Specify your desired version
+          PACKER_VERSION="1.9.4"
           wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
           unzip packer_${PACKER_VERSION}_linux_amd64.zip
           sudo mv packer /usr/local/bin/
@@ -25,7 +57,31 @@ jobs:
         run: packer init debian12.pkr.hcl
 
       - name: Build Custom AMI
+        id: ami_build
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: packer build debian12.pkr.hcl
+        run: |
+          packer build debian12.pkr.hcl | tee output.txt
+          AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
+          echo "AMI ID: $AMI_ID"
+
+      - name: Create Application Artifact
+        run: |
+          mkdir -p my-app
+          cp -r . my-app
+          zip -r my-app.zip my-app
+
+      - name: Copy Artifact to AMI
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
+          echo "Copying artifact to AMI with ID: $AMI_ID"
+
+      - name: Clean up
+        run: |
+          rm -rf my-app
+          rm my-app.zip
+          rm output.txt
