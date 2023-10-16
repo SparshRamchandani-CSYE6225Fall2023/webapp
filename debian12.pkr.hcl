@@ -48,11 +48,20 @@ build {
       # "expect -c 'setup.sh; expect \"Enter Password:\"; send \"postgres\n\"; interact'",
       # "expect -c 'setup.sh; expect \"Please answer \"y\" or \"n\": \" ; send \"y\n\"; interact'"
       # "sudo unzip /home/my-app -d /home",
-      "sudo tar -xvf /home/my-app.zip -C /home",
-      "sudo ls /home",
+      # "sudo tar -xvf /home/my-app.zip -C /home",
+      # "sudo ls /home",
       # "sudo ls /home/webapp-updated",
     ]
   }
+
+  provisioner "shell" {
+    inline = [
+      
+      "sudo tar -xvf /home/my-app.zip -C /home",
+      "sudo ls /home",
+    ]
+  }
+
 
   post-processor "shell-local" {
     inline = [
