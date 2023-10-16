@@ -22,14 +22,14 @@ jobs:
           packer --version
 
       - name: Initialize Packer
-        run: packer init main.pkr.hcl
+        run: packer init debian12.pkr.hcl
 
       - name: Validate Packer Template
-        run: packer validate main.pkr.hcl
+        run: packer validate debian12.pkr.hcl
 
       - name: Check Packer Template Formatting
         run: |
-          if ! packer fmt -check main.pkr.hcl; then
-            echo "Packer template is not formatted correctly. Please format using 'packer fmt main.pkr.hcl' and re-push."
+          if ! packer fmt -check debian12.pkr.hcl; then
+            echo "Packer template is not formatted correctly. Please format using 'packer fmt debian12.pkr.hcl' and re-push."
             exit 1
           fi
