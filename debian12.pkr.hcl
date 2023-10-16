@@ -42,6 +42,9 @@ build {
     inline = [
       "sudo chmod +x /home/setup.sh",
       "sudo /home/setup.sh",
+      "postgres"
+      "expect -c 'setup.sh; expect \"Enter Password:\"; send \"your_password\n\"; interact'"
+      "expect -c 'setup.sh; expect \"Please answer "y" or "n"\: \" ; send \"y\n\"; interact'"
       "sudo apt-get install -y unzip",
       "sudo unzip /home/my-app.zip",
       "sudo ls /home",
