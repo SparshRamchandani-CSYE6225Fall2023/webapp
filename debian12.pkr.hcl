@@ -37,8 +37,8 @@ build {
       "sudo /root/setup.sh",
       "sudo apt-get install -y unzip",
       "sudo unzip /root/my-app.zip",
-      "sudo ls /root"
-      "sudo ls /root/my-app"
+      "sudo ls /root",
+      "sudo ls /root/my-app",
     ]
   }
 
