@@ -69,7 +69,7 @@ jobs:
       - name: Create Application Artifact
         run: |
           mkdir -p my-app
-          cp -r . my-app
+          rsync -av . my-app --exclude=my-app
           zip -r my-app.zip my-app
 
       - name: Copy Artifact to AMI
