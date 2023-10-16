@@ -40,14 +40,12 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo apt-get update",
+      "sudo apt-get install -y expect",
       "sudo chmod +x /home/setup.sh",
       "sudo /home/setup.sh",
       "expect -c 'setup.sh; expect \"Enter Password:\"; send \"postgres\n\"; interact'",
-      "expect -c 'setup.sh; expect \"Please answer "y" or "n"\: \" ; send \"y\n\"; interact'",
-      "sudo apt-get install -y unzip",
-      "sudo unzip /home/my-app.zip",
-      "sudo ls /home",
-      "sudo ls /home/my-app",
+      "expect -c 'setup.sh; expect \"Please answer \"y\" or \"n\": \" ; send \"y\n\"; interact'"
     ]
   }
 
