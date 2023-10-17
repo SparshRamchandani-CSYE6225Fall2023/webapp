@@ -34,8 +34,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "/home/runner/work/webapp-updated/webapp-updated/artifacts/webapp.zip"
-    destination = "/home/webapp.zip"
+    source      = "/home/runner/work/webapp-updated/webapp-updated"
+    destination = "/home"
   }
 
   provisioner "shell" {
