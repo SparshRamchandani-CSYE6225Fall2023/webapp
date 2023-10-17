@@ -34,8 +34,7 @@ build {
   }
 
   provisioner "file" {
-    direction   = "upload"
-    source      = "./artifacts/webapp.zip"
+    source      = "/home/runner/work/webapp-updated/webapp-updated/artifacts/webapp.zip"
     destination = "/home/webapp.zip"
   }
 
