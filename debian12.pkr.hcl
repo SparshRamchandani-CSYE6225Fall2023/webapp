@@ -39,6 +39,11 @@ build {
     destination = "webapp.zip"
   }
 
+  provisioner "file"{
+    direction = "upload"
+    source = "~/opt/"
+  }
+
   provisioner "shell" {
     inline = [
       "sudo apt-get update",
@@ -50,8 +55,6 @@ build {
       "sudo apt-get install unzip",
       "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
-      "sudo ls web-app",
-      "echo 'Hello WebApp'",
     ]
   }
 
