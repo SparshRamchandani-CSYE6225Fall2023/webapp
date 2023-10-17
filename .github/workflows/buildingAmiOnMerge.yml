@@ -68,7 +68,7 @@ jobs:
 
       - name: Create Application Artifact
         run: |
-          mkdir -p webapp
+          mkdir artifacts
           zip -r artifacts/webapp.zip .
 
     #   - name: Copy Artifact to AMI
