@@ -34,8 +34,9 @@ build {
   }
 
   provisioner "file" {
-    source      = "/home/runner/work/webapp-updated/webapp-updated"
-    destination = "/home"
+    direction   = "upload"
+    source      = "./artifacts/webapp.zip"
+    destination = "/home/webapp.zip"
   }
 
   provisioner "shell" {
@@ -54,18 +55,11 @@ build {
     ]
   }
 
-  provisioner "shell" {
-    inline = [
-
-      # "sudo tar -xvf /home/webapp.zip -C /home",
-      "echo 'hello home'",
-      "sudo ls /home",
-    ]
-  }
-
 
   post-processor "shell-local" {
     inline = [
+      "sudo unzip /home/webapp.zip -d /home",
+      "sudo ls /home",
       "echo 'Build Successful !!! Your debian AMI is ready'"
     ]
   }

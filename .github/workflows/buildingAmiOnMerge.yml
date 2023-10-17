@@ -68,10 +68,8 @@ jobs:
 
       - name: Create Application Artifact
         run: |
-          pwd
           mkdir -p webapp
-          rsync -av . webapp --exclude=webapp
-          zip -r webapp.zip webapp
+          zip -r artifacts/webapp.zip .
 
     #   - name: Copy Artifact to AMI
     #     env:
