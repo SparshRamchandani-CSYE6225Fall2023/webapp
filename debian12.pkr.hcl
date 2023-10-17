@@ -50,6 +50,7 @@ build {
       "sudo apt-get install unzip",
       "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
+      "sudo ls web-app",
       "echo 'Hello WebApp'",
     ]
   }

@@ -1,35 +1,3 @@
-# name: Build AMI after PR Merge
-
-# on:
-#   push:
-#     branches:
-#       - ami-feature1    #branch name change
-
-# jobs:
-#   build-ami:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v2
-
-#       - name: Install Packer
-#         run: |
-#           PACKER_VERSION="1.9.4"  # Specify your desired version
-#           wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
-#           unzip packer_${PACKER_VERSION}_linux_amd64.zip
-#           sudo mv packer /usr/local/bin/
-#           packer --version
-
-#       - name: Initialize Packer
-#         run: packer init debian12.pkr.hcl
-
-#       - name: Build Custom AMI
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         run: packer build debian12.pkr.hcl
-
 name: Build AMI after PR Merge
 
 on:
@@ -44,6 +12,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Setup envirornment variables
+        run: |
+          touch .env
+          echo PORT=${{ vars.PORT }} >> .env
+          echo PGHOST=${{ vars.PGHOST }} >> .env
+          echo PGDATABASE=${{ vars.PGDATABASE}} >> .env
+          echo PGUSER=${{ vars.PGUSER }} >> .env
+          echo PGPASSWORD=${{ secrets.PGPASSWORD }} >> .env
 
       - name: Create Application Artifact
         run: |
@@ -68,7 +45,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           packer build debian12.pkr.hcl
-          AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
           echo "AMI ID: $AMI_ID"
 
       - name: Clean up
