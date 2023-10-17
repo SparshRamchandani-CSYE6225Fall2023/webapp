@@ -48,7 +48,7 @@ build {
       "sudo /home/setup.sh",
       "sudo ls",
       "sudo apt-get install unzip",
-      "mkdir web-app"
+      "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
       "echo 'Hello WebApp'",
     ]
