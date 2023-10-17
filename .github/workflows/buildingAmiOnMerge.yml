@@ -45,10 +45,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           packer build debian12.pkr.hcl
-          echo "AMI ID: $AMI_ID"
-
-      - name: Clean up
-        run: |
-          rm -rf webapp
-          rm webapp.zip
-          rm output.txt
