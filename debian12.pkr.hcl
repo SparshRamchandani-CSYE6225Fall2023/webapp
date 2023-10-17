@@ -33,10 +33,10 @@ build {
     destination = "/home/setup.sh"
   }
 
-  # provisioner "file" {
-  #   source      = "/home/runner/work/webapp-updated/webapp-updated"
-  #   destination = "/home"
-  # }
+  provisioner "file" {
+    source      = "${var.artifact_path}"
+    destination = "/home/webapp.zip"
+  }
 
   provisioner "shell" {
     inline = [
@@ -53,13 +53,6 @@ build {
       # "sudo ls /home/webapp-updated",
     ]
   }
-
-  provisioner "file" {
-    direction  = "upload"
-    source      = "./artifacts/webapp.zip"
-    destination = "/home/webapp.zip"
-  }
-
 
   post-processor "shell-local" {
     inline = [
