@@ -68,6 +68,7 @@ jobs:
 
       - name: Create Application Artifact
         run: |
+          pwd
           mkdir artifacts
           zip -r artifacts/webapp.zip .
 
