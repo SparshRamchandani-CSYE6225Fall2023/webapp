@@ -39,11 +39,6 @@ build {
     destination = "webapp.zip"
   }
 
-  provisioner "file"{
-    direction = "upload"
-    source = "~/opt/"
-  }
-
   provisioner "shell" {
     inline = [
       "sudo apt-get update",
