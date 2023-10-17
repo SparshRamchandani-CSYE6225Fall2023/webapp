@@ -68,17 +68,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          packer build debian12.pkr.hcl | tee output.txt
+          packer build -var 'artifact_path=artifacts/webapp.zip' debian12.pkr.hcl
           AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
           echo "AMI ID: $AMI_ID"
-
-    #   - name: Copy Artifact to AMI
-    #     env:
-    #       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     run: |
-    #       AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
-    #       echo "Copying artifact to AMI with ID: $AMI_ID"
 
       - name: Clean up
         run: |
