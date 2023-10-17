@@ -34,7 +34,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "${var.artifact_path}"
+    direction = "upload"
+    source      = "./artifacts/webapp.zip"
     destination = "/home/webapp.zip"
   }
 
@@ -53,6 +54,7 @@ build {
       # "sudo ls /home/webapp-updated",
     ]
   }
+
 
   post-processor "shell-local" {
     inline = [
