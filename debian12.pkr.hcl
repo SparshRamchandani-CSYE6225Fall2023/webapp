@@ -36,7 +36,7 @@ build {
   provisioner "file" {
     direction   = "upload"
     source      = "./artifacts/webapp.zip"
-    destination = "/home/webapp.zip"
+    destination = "webapp.zip"
   }
 
   provisioner "shell" {
@@ -46,20 +46,13 @@ build {
       "sudo apt-get install -y unzip",
       "sudo chmod +x /home/setup.sh",
       "sudo /home/setup.sh",
-      # "expect -c 'setup.sh; expect \"Enter Password:\"; send \"postgres\n\"; interact'",
-      # "expect -c 'setup.sh; expect \"Please answer \"y\" or \"n\": \" ; send \"y\n\"; interact'"
-      # "sudo unzip /home/webapp -d /home",
-      # "sudo tar -xvf /home/webapp.zip -C /home",
-      # "sudo ls /home",
-      # "sudo ls /home/webapp-updated",
+      "sudo ls",
     ]
   }
 
 
   post-processor "shell-local" {
     inline = [
-      "sudo unzip /home/webapp.zip -d /home",
-      "sudo ls /home",
       "echo 'Build Successful !!! Your debian AMI is ready'"
     ]
   }
