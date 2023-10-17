@@ -51,6 +51,7 @@ build {
       "mkdir web-app"
       "sudo unzip webapp.zip -d web-app",
       "ls /web-app",
+      "echo 'Hello WebApp'",
     ]
   }
 
