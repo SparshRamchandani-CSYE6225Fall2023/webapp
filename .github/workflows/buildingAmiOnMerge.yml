@@ -45,6 +45,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Create Application Artifact
+        run: |
+         mkdir artifacts
+         zip -r artifacts/webapp.zip .
+
       - name: Install Packer
         run: |
           PACKER_VERSION="1.9.4"  # Specify your desired version
@@ -65,12 +70,6 @@ jobs:
           packer build debian12.pkr.hcl | tee output.txt
           AMI_ID=$(grep -o 'ami-[a-z0-9]\+' output.txt)
           echo "AMI ID: $AMI_ID"
-
-      - name: Create Application Artifact
-        run: |
-          pwd
-          mkdir artifacts
-          zip -r artifacts/webapp.zip .
 
     #   - name: Copy Artifact to AMI
     #     env:
