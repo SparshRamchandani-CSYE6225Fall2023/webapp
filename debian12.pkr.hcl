@@ -50,16 +50,14 @@ build {
       "sudo apt-get install unzip",
       "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
-      # "sudo chmod a+w /web-app",
-      # "sudo chmod -R +rwx /web-app",
+      "cd web-app",
+      "sudo npm i",
     ]
   }
 
 
   post-processor "shell-local" {
     inline = [
-      # "cd web-app",
-      # "npm i",
       "echo 'Build Successful !!! Your debian AMI is ready'",
     ]
   }
