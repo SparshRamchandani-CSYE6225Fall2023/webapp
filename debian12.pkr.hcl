@@ -9,7 +9,7 @@ packer {
 
 source "amazon-ebs" "debian" {
   ami_name      = "packer-debian12-ami-{{timestamp}}"
-  source_ami    = "ami-0d3eda47adff3e44b"
+  source_ami    = "ami-06db4d78cb1d3bbf9"
   instance_type = "t2.micro"
   region        = "us-east-1"
   profile       = "aws-cli-ami" # aws cli profile
