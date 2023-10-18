@@ -9,10 +9,10 @@ packer {
 
 source "amazon-ebs" "debian" {
   ami_name      = "packer-debian12-ami-{{timestamp}}"
-  source_ami_filter{
+  source_ami_filter {
     owners = ["amazon"]
     most_recent = true
-    filter = {
+    filters = {
       virtualization-type = "hvm"
       name = "debian-12-amd64-*"
       root-device-type = "ebs"
