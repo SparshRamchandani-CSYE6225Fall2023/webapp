@@ -20,8 +20,8 @@ source "amazon-ebs" "debian" {
   }
   instance_type = "t2.micro"
   # region        = "us-west-1"
-  profile       = "aws-cli-ami" # aws cli profile
-  ssh_username  = "admin"
+  profile      = "aws-cli-ami" # aws cli profile
+  ssh_username = "admin"
 
   ami_users = ["773453770225", "884433268858"] # acc. id
 }
