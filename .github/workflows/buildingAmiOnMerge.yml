@@ -19,7 +19,6 @@ jobs:
       - name: Setup envirornment variables
         run: |
           touch .env
-          echo PORT=${{ secrets.PGPORT }} >> .env
           echo PGHOST=${{ secrets.PGHOST }} >> .env
           echo PGDATABASE=${{ secrets.PGDATABASE}} >> .env
           echo PGUSER=${{ secrets.PGUSER }} >> .env
