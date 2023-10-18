@@ -19,7 +19,7 @@ source "amazon-ebs" "debian" {
     }
   }
   instance_type = "t2.micro"
-  region        = "us-west-1"
+  # region        = "us-west-1"
   profile       = "aws-cli-ami" # aws cli profile
   ssh_username  = "admin"
 
