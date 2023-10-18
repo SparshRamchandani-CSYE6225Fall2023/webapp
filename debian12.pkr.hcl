@@ -7,6 +7,26 @@ packer {
   }
 }
 
+variable "instace_type" {
+  type    = string
+  default = "t2.micro"
+}
+
+variable "ssh_username" {
+  type    = string
+  default = "admin"
+}
+
+variable ami_users {
+  type    = list(string)
+  default = ["773453770225", "884433268858"]
+}
+
+variable aws_profile {
+  type    = string
+  default = "aws-cli-ami"
+}
+
 source "amazon-ebs" "debian" {
   ami_name = "packer-debian12-ami-{{timestamp}}"
   source_ami_filter {
@@ -18,12 +38,11 @@ source "amazon-ebs" "debian" {
       root-device-type    = "ebs"
     }
   }
-  instance_type = "t2.micro"
-  # region        = "us-west-1"
-  profile      = "aws-cli-ami" # aws cli profile
-  ssh_username = "admin"
+  instance_type = "${var.instace_type}"
+  profile       = "${var.aws_profile}" # aws cli profile
+  ssh_username  = "${var.ssh_username}"
 
-  ami_users = ["773453770225", "884433268858"] # acc. id
+  ami_users = "${var.ami_users}" # acc. id
 }
 
 build {
@@ -60,6 +79,7 @@ build {
       "sudo unzip webapp.zip -d web-app",
       "cd web-app",
       "sudo npm i",
+      "sudo apt-get remove --purge -y git",
     ]
   }
 
