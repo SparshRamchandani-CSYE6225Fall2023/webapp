@@ -4,8 +4,14 @@ name: Build CI
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
       - main # Assuming your primary branch is named 'main'
+  push:
+    branches:
+      - main
 
  
 
