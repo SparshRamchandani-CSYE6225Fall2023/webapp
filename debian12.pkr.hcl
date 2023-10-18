@@ -21,13 +21,6 @@ source "amazon-ebs" "debian" {
 build {
   sources = ["source.amazon-ebs.debian"]
 
-  provisioner "shell" {
-    inline = [
-      "sudo chmod a+w /home",
-      "sudo chmod -R +rwx /home",
-    ]
-  }
-
   provisioner "file" {
     source      = "setup.sh"
     destination = "/home/setup.sh"
@@ -50,6 +43,8 @@ build {
       "sudo apt-get install unzip",
       "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
+      "sudo chmod a+w /web-app",
+      "sudo chmod -R +rwx /web-app",
       "cd web-app",
       "npm i",
     ]
