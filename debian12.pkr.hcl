@@ -50,6 +50,8 @@ build {
       "sudo apt-get install unzip",
       "mkdir web-app",
       "sudo unzip webapp.zip -d web-app",
+      "cd web-app",
+      "npm i",
     ]
   }
 
