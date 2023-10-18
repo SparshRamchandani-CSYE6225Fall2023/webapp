@@ -21,6 +21,13 @@ source "amazon-ebs" "debian" {
 build {
   sources = ["source.amazon-ebs.debian"]
 
+  provisioner "shell" {
+    inline = [
+      "sudo chmod a+w /home",
+      "sudo chmod -R +rwx /home",
+    ]
+  }
+
   provisioner "file" {
     source      = "setup.sh"
     destination = "/home/setup.sh"
