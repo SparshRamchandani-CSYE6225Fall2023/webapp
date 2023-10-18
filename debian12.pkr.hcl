@@ -52,15 +52,15 @@ build {
       "sudo unzip webapp.zip -d web-app",
       "sudo chmod a+w /web-app",
       "sudo chmod -R +rwx /web-app",
-      "cd web-app",
-      "npm i",
     ]
   }
 
 
   post-processor "shell-local" {
     inline = [
-      "echo 'Build Successful !!! Your debian AMI is ready'"
+      "cd web-app",
+      "npm i",
+      "echo 'Build Successful !!! Your debian AMI is ready'",
     ]
   }
 }
