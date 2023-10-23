@@ -1,26 +1,30 @@
 import dbConfigs from "./config/dbConfig.js";
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
 
-const isAwsRDS = process.env.PGHOST && process.env.PGHOST.includes('.rds.amazonaws.com');
+dotenv.config();
+
+const isAwsRDS =
+  process.env.PGHOST && process.env.PGHOST.includes(".rds.amazonaws.com");
 const sequelizeConfig = {
-    dialect: 'postgres', 
-    host: process.env.DB_HOST,
+  dialect: "postgres",
+  host: process.env.DB_HOST,
+};
+
+if (isAwsRDS) {
+  sequelizeConfig.dialectOptions = {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   };
+}
 
-  if (isAwsRDS) {
-    sequelizeConfig.dialectOptions = {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    };
-  }
-
-const sequelize= new Sequelize(
-    dbConfigs.DB,
-    dbConfigs.USER, 
-    dbConfigs.PASSWORD,
-    sequelizeConfig
+const sequelize = new Sequelize(
+  process.env.PGDATABASE,
+  process.env.PGUSER,
+  process.env.PGPASSWORD,
+  sequelizeConfig
 );
 
 export default sequelize;
