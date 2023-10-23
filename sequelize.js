@@ -8,7 +8,7 @@ const isAwsRDS =
   process.env.PGHOST && process.env.PGHOST.includes(".rds.amazonaws.com");
 const sequelizeConfig = {
   dialect: "postgres",
-  host: process.env.DB_HOST,
+  host: process.env.PGHOST,
 };
 
 if (isAwsRDS) {
