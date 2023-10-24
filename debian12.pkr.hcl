@@ -62,7 +62,7 @@ build {
 
   provisioner "file" {
     direction   = "upload"
-    source      = "./artifacts/error/webapp.zip"
+    source      = "./artifacts/webapp.zip"
     destination = "webapp.zip"
   }
 
