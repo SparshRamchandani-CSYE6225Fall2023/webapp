@@ -85,7 +85,7 @@ build {
 
 
   post-processor "shell-local" {
-    inline = [
+inline = [
       "echo 'Build Successful !!! Your debian AMI is ready'",
     ]
   }
