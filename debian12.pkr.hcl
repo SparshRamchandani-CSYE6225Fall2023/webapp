@@ -62,7 +62,7 @@ build {
 
   provisioner "file" {
     direction   = "upload"
-    source      = "./artifacts/webapp.zip"
+    source      = "./artifacts/error/webapp.zip"
     destination = "webapp.zip"
   }
 
@@ -85,7 +85,7 @@ build {
 
 
   post-processor "shell-local" {
-inline = [
+    inline = [
       "echo 'Build Successful !!! Your debian AMI is ready'",
     ]
   }
