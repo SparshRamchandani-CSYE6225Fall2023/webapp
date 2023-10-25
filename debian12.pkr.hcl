@@ -52,19 +52,12 @@ build {
     inline = [
       "sudo chmod a+w /home",
       "sudo chmod -R +rwx /home",
-      "sudo chmod a+w /lib",
-      "sudo chmod -R +rwx /lib",
     ]
   }
 
   provisioner "file" {
     source      = "setup.sh"
     destination = "/home/setup.sh"
-  }
-
-  provisioner "file" {
-    source      = "./systemd/webapp.service"
-    destination = "/lib/systemd/system/webapp.service"
   }
 
   provisioner "file" {
