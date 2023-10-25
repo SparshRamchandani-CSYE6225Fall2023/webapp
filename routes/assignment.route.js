@@ -114,7 +114,7 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
       });
  
     if (_.isEmpty(assignmentInfo)) {
-        return res.status(400).send();
+        return res.status(404).send();
       } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
         return res.status(403).json({ error: "Your are not authorized user" });
       }
