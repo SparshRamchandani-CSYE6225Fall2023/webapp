@@ -77,7 +77,7 @@ build {
       "sudo mkdir /opt/csye6225/web-app",
       "sudo unzip /tmp/webapp.zip -d /opt/csye6225/web-app",
       "sudo cp /opt/csye6225/web-app/systemd/webapp.service /etc/systemd/system/webapp.service",
-      "sudo cd /opt/csye6225/web-app",
+      "cd /opt/csye6225/web-app",
       "sudo npm i",
       "sudo apt-get remove --purge -y git",
       "sudo rm -rf /home/admin/webapp.zip",
