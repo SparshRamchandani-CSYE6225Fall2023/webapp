@@ -81,6 +81,9 @@ build {
       "sudo npm i",
       "sudo apt-get remove --purge -y git",
       "sudo rm -rf /home/admin/webapp.zip",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable webapp",
+      "sudo systemctl start webapp"
     ]
   }
 
