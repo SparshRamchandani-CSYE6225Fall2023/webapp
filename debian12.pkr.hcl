@@ -63,11 +63,6 @@ build {
   }
 
   provisioner "file" {
-    source      = "./systemd/webapp.service"
-    destination = "/etc/systemd/system/webapp.service"
-  }
-
-  provisioner "file" {
     direction   = "upload"
     source      = "./artifacts/webapp.zip"
     destination = "/tmp/webapp.zip"
@@ -81,6 +76,7 @@ build {
       "sudo apt-get install unzip",
       "mkdir /opt/csye6225/web-app",
       "sudo unzip webapp.zip -d /opt/csye6225/web-app",
+      "sudo cp /opt/csye6225/web-app/systemd/webapp.service /etc/systemd/system/webapp.service",
       "cd /opt/csye6225/web-app",
       "sudo npm i",
       "sudo apt-get remove --purge -y git",
