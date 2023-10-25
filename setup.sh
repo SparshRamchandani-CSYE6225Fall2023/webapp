@@ -14,8 +14,8 @@ sudo apt install -y postgresql postgresql-contrib
  
 
 # Start and enable PostgreSQL service
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
+# sudo systemctl start postgresql
+# sudo systemctl enable postgresql
 
  
 
@@ -31,6 +31,6 @@ nodejs -v
  
 
 # Configure PostgreSQL: set password, create database, and create user
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+# sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 # sudo -u postgres createdb postgres
 # sudo -u postgres createuser --interactive --pwprompt postgres
