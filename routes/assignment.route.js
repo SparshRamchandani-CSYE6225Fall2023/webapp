@@ -74,31 +74,23 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   };
   //insert the data to data base
   const newAssignment = await assignmentDb.create(tempAssignment);
-  const { user_id, ...responseWithoutUserId } = newAssignment;
   console.log(newAssignment);
-  res.status(201).json(responseWithoutUserId);
+  res.status(201).json(newAssignment.exclude("user_id"));
 });
 
 assignmentRouter.delete("/:id", basicAuthenticator,queryParameterValidators, async (req, res) => {
   const { id: assignmentId } = req.params;
   try{
-    try{
-      const assignmentInfo = await db.assignments.findOne({
+    const assignmentInfo = await db.assignments.findOne({
         where: { assignment_id: assignmentId },
       });
-    }catch(err){
-        res.status(404).send();
-    }
-  
+
     if (_.isEmpty(assignmentInfo)) {
-        return res.status(400).send();
+        return res.status(404).send();
       } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
         return res.status(403).json({ error: "Your are not authorized user" });
       }
   
-
-  
-
   await db.assignments.destroy({ where: { assignment_id: assignmentId } });
 
   return res.status(204).json();
