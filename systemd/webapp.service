@@ -1,0 +1,15 @@
+[Unit]
+Description=Your Node.js Application
+After=network.target cloud-init.service
+Wants=cloud-init.service
+
+[Service]
+EnvironmentFile=/home/admin/web-app/.env
+Type=simple
+User=admin
+ExecStart=/usr/bin/node /home/admin/web-app/app.js
+Restart=on-failure
+WorkingDirectory=/home/admin/web-app
+
+[Install]
+WantedBy=cloud-init.target
