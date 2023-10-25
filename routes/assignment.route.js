@@ -74,7 +74,7 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   };
   //insert the data to data base
   const newAssignment = await assignmentDb.create(tempAssignment);
-  delete newAssignment.user_id;
+  delete newAssignment.dataValues.user_id;
   res.status(201).json(newAssignment);
 });
 
