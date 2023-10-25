@@ -61,6 +61,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "./systemd/webapp.service"
+    destination = "/lib/systemd/system/webapp.service"
+  }
+
+  provisioner "file" {
     direction   = "upload"
     source      = "./artifacts/webapp.zip"
     destination = "webapp.zip"

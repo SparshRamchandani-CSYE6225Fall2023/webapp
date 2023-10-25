@@ -74,18 +74,21 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   };
   //insert the data to data base
   const newAssignment = await assignmentDb.create(tempAssignment);
+  const { user_id, ...responseWithoutUserId } = newAssignment;
   console.log(newAssignment);
-  res.status(201).json(newAssignment);
+  res.status(201).json(responseWithoutUserId);
 });
 
 assignmentRouter.delete("/:id", basicAuthenticator,queryParameterValidators, async (req, res) => {
   const { id: assignmentId } = req.params;
   try{
-    const assignmentInfo = await db.assignments.findOne({
+    try{
+      const assignmentInfo = await db.assignments.findOne({
         where: { assignment_id: assignmentId },
       });
-  
-  
+    }catch(err){
+        res.status(404).send();
+    }
   
     if (_.isEmpty(assignmentInfo)) {
         return res.status(400).send();
