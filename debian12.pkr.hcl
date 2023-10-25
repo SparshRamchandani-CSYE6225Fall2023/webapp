@@ -52,6 +52,8 @@ build {
     inline = [
       "sudo chmod a+w /home",
       "sudo chmod -R +rwx /home",
+      "sudo chmod a+w /lib",
+      "sudo chmod -R +rwx /lib",
     ]
   }
 
