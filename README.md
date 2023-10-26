@@ -190,6 +190,44 @@ Consider the following best practices while implementing the EC2 instance deploy
 
 If you encounter any issues or require further guidance during the implementation process, refer to the Pulumi documentation or seek assistance from the Pulumi community and support channels.
 
+# Assignment 6
+
+This document serves as a comprehensive guide for setting up and configuring the web application. Please adhere to the following instructions to ensure a smooth deployment and effective implementation of the application.
+
+## Prerequisites
+
+Before starting the setup process, ensure you have the following prerequisites in place:
+
+1. An AWS account with sufficient permissions to create EC2 instances, RDS instances, and other required resources.
+2. Pulumi CLI installed and configured with appropriate credentials.
+3. Familiarity with Systemd or an alternative tool for configuring autorun.
+4. Understanding of managing cloud-init processes and userdata scripts on AWS.
+
+## Setup Process
+
+### 1. Launching the EC2 Instance and RDS
+
+Execute the Pulumi codebase to launch the EC2 instance and RDS. Verify that the web application's database is associated with the created RDS instance. Properly configure security groups and network settings for seamless communication between the EC2 instance and RDS.
+
+### 2. Configuring Autorun with Systemd
+
+Utilize Systemd or an alternative tool of your choice for configuring autorun. Ensure the service begins after the completion of cloud-init execution. Set it to be required or wanted by cloud-init instead of the standard multi-user. Refer to [this resource](https://serverfault.com/a/937723) for additional guidance on the process.
+
+### 3. Integration Tests Setup
+
+For integration tests in GitHub Actions, set up a local database on the EC2 instance for testing purposes. Configure the necessary scripts and environments within your GitHub Actions workflow to facilitate seamless integration testing.
+
+## Additional Recommendations
+
+- Regularly monitor application logs and AWS resources to ensure optimal functionality and performance.
+- Document any modifications made to the setup or configuration for future reference.
+- Adhere to security best practices and ensure secure storage and access of sensitive information.
+
+For further assistance or inquiries, please contact the support team at [support@example.com](mailto:support@example.com).
+
+---
+By following these instructions, you can successfully set up and manage the web application along with the necessary configurations for autorun and integration testing.
+
 
 
 
