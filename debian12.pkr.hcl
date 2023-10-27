@@ -54,6 +54,8 @@ build {
       "sudo chmod -R +rwx /home",
       "sudo groupadd csye6225",
       "sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225",
+      "sudo chown :csye6225 /opt/csye6225",
+      "sudo chmod 700 /opt/csye6225",
     ]
   }
 
