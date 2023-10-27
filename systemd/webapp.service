@@ -8,7 +8,8 @@ EnvironmentFile=/opt/csye6225/web-app/.env
 Type=simple
 User=csye6225
 ExecStart=/usr/bin/node /opt/csye6225/web-app/app.js
-Restart=on-failure
+Restart=always
+RestartSec=10
 WorkingDirectory=/opt/csye6225/web-app
 
 [Install]

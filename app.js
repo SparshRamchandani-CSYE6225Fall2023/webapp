@@ -15,3 +15,9 @@ app.listen(PORT,(err)=>{
         console.log("Application running on port number ",PORT);
     }
 })
+
+// default route 
+app.get('/', function(req, res){
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("Hello World\n");
+  });
