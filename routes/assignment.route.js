@@ -35,7 +35,7 @@ assignmentRouter.get("/:id",basicAuthenticator, queryParameterValidators,async (
     where: { assignment_id: assignmentId },
   });
   if (_.isEmpty(assignmentInfo)) {
-    return res.status(400).send();
+    return res.status(404).send();
   } else {
     res.status(200).json(assignmentInfo);
   }
