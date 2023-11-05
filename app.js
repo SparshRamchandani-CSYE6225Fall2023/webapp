@@ -7,7 +7,7 @@ const PORT= process.env.PORT || 3000;
 app.use(express.json());
 app.use("/healthz",appRoute);
 app.use("/v1/assignments", assignmentRoute);
-app.use("/",(req,res)=>res.status(503).send())
+// app.use("/",(req,res)=>res.status(503).send())
 app.listen(PORT,(err)=>{
     if(err){
         console.log("Failed to start the application")
