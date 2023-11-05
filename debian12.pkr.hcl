@@ -81,8 +81,8 @@ build {
       "sudo npm i",
       "sudo apt-get remove --purge -y git",
       "sudo rm -rf /home/admin/webapp.zip",
-      "sudo chown :csye6225 /opt/csye6225",
-      "sudo chmod 700 /opt/csye6225",
+      "sudo chown -R csye6225:csye6225 /opt/csye6225",
+      "sudo chmod -R 700 /opt/csye6225",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
       "sudo systemctl start webapp"
