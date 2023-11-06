@@ -5,6 +5,7 @@ import _ from "lodash";
 import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
 import urlValidator from "../validators/urlValidator.js";
+import logger from "../configs/logger.config.js";
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
@@ -12,6 +13,7 @@ const assignmentDb = db.assignments;
 
 assignmentRouter.use("/", async(req,res,next)=>{
     if(req.method !== "GET" && req.method!=="POST" && req.method!=="DELETE" && req.method!=="PUT"){
+        logger.warn("Method not allowed");
         return res.status(405).send();
     }
     next();
@@ -19,12 +21,10 @@ assignmentRouter.use("/", async(req,res,next)=>{
   
 
 assignmentRouter.get("/",basicAuthenticator, queryParameterValidators, async (req, res) => {
-  // add Validation for the user who create the assignments can only see his assignments
-//   queryParameterValidators(req, res);
   const assignmentList = await assignmentDb.findAll({
     attributes: { exclude: ["user_id"] },
   });
-  console.log(req.authUser);
+  logger.info("Assignment list is ",assignmentList);
   res.status(200).json(assignmentList);
 });
 
@@ -35,25 +35,26 @@ assignmentRouter.get("/:id",basicAuthenticator, queryParameterValidators,async (
     where: { assignment_id: assignmentId },
   });
   if (_.isEmpty(assignmentInfo)) {
+    logger.error("Assignment with the follwing id not found",assignmentId);
     return res.status(404).send();
   } else {
+    logger.info("Assignment with the follwing id found",assignmentId,assignmentInfo)
     res.status(200).json(assignmentInfo);
   }
 });
 
 assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (req, res) => {
   // add Validation for empty body and missing fields
-
   const expectedKeys = ["name", "points", "num_of_attemps", "deadline"];
-
   // Check if there are any extra keys in the request body
   const extraKeys = Object.keys(req.body).filter(
     (key) => !expectedKeys.includes(key)
   );
 
   if (extraKeys.length > 0) {
+    logger.error("Invalid keys in the request",extraKeys);
     return res.status(400).json({
-      errorMessage: `Invalid keys in the request: ${extraKeys.join(", ")}`,
+    errorMessage: `Invalid keys in the request: ${extraKeys.join(", ")}`,
     });
   }
 
@@ -62,6 +63,7 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validatePostRequest(req);
   if (isNotValid) {
+    logger.error("Invalid request body",errorMessage);
     return res.status(400).json({ errorMessage });
   }
 
@@ -74,6 +76,7 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   };
   //insert the data to data base
   const newAssignment = await assignmentDb.create(tempAssignment);
+  logger.info("New assignment created",newAssignment);
   delete newAssignment.dataValues.user_id;
   res.status(201).json(newAssignment);
 });
