@@ -93,7 +93,7 @@ build {
       "echo 'Enabling the CloudWatch Agent service...'",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
-      "rm ./amazon-cloudwatch-agent.deb",
+      "sudo rm ./amazon-cloudwatch-agent.deb",
 
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
