@@ -18,6 +18,8 @@ jobs:
       - name: Setup envirornment variables
         run: |
           touch .env
+          echo ENVIRONMENT=${{ secrets.ENVIRONMENT }} >> .env
+          echo =${{ secrets.PGHOST }} >> .env
           echo PGHOST=${{ secrets.PGHOST }} >> .env
           echo PGDATABASE=${{ secrets.PGDATABASE}} >> .env
           echo PGUSER=${{ secrets.PGUSER }} >> .env

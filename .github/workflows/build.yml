@@ -45,6 +45,7 @@ jobs:
       - name: "Create env file"
         run: |
           touch .env
+          echo ENVIRONMENT=${{ secrets.ENVIRONMENT }} >> .env
           echo PGDATABASE=${{ secrets.PGDATABASE }} >> .env
           echo PGUSER=${{ secrets.PGUSER }} >> .env
           echo PGPASSWORD=${{ secrets.PGPASSWORD }} >> .env
