@@ -83,9 +83,27 @@ build {
       "sudo rm -rf /home/admin/webapp.zip",
       "sudo chown -R csye6225:csye6225 /opt/csye6225",
       "sudo chmod -R 700 /opt/csye6225",
+      #Installing CloudWatch Agent
+      "echo 'Downloading the CloudWatch Agent package...'",
+      "sudo wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+
+      "echo 'Installing the CloudWatch Agent package...'",
+      "sudo dpkg -i -E ./amazon-cloudwatch-agent.deb",
+
+      "echo 'Enabling the CloudWatch Agent service...'",
+      "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent",
+      "rm ./amazon-cloudwatch-agent.deb",
+
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
-      "sudo systemctl start webapp"
+      "sudo systemctl start webapp",
+      "sudo systemctl restart webapp",
+      "sudo systemctl status webapp",
+      "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent",
+
+
     ]
   }
 

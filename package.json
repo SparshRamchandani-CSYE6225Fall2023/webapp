@@ -11,6 +11,7 @@
   "author": "Sparsh Ramchandani",
   "license": "ISC",
   "dependencies": {
+    "app-root-path": "^3.1.0",
     "bcryptjs": "^2.4.3",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.3.1",
@@ -21,7 +22,9 @@
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "statsd": "^0.9.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.20",
