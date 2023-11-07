@@ -18,9 +18,8 @@ const checkHealth = async (req, res) => {
     try {
       await sequelize.authenticate();
       logger.info('Health check successful');
-      statsd.increment('endpoint.health')
+      statsd.increment('endpoint.health');
       res.set('Cache-control', 'no-cache');
-      logger.info('Health check successful');
       return res.status(200).send();
     } catch (error) {
       logger.fatal('Health check failed', error);
