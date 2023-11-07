@@ -3,12 +3,14 @@ import sequelize from "./sequelize.js";
 import { Sequelize, DataTypes } from "sequelize";
 import insertDataFromCSV from "./csv-parser.js";
 import assignmentsModel from "./models/assignments.js";
+import logger from "./configs/logger.config.js";
 
 
 sequelize.authenticate().then(()=>{
     console.log("Connected to the database")
 }).catch(err=>{
     console.error("Error while connecting to the db", err)
+    logger.error("Error while connecting to the db", err)
 })
 
 const db={};
@@ -21,6 +23,7 @@ db.users.hasMany(db.assignments,{foreignKey:{name :"user_id"},onDelete:"CASCADE"
 
 db.sequelize.sync({force:false}).then(()=>{
     console.log("yes re-sync done!")
+    logger.info("yes re-sync done!")
     insertDataFromCSV()
 });
 
