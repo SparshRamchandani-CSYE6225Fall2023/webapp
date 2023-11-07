@@ -11,8 +11,8 @@ const checkHealth = async (req, res) => {
   }
   const length = req.headers['content-length'];
   if ((req.method === 'GET' && length > 0) || req.url.includes('?')) {
-    logger.error('Bad Request on health check');
-    res.status(400).send();
+    logger.error('Bad Request on health check, Query parameters not allowed');
+    return res.status(400).send();
   }
    else {
     try {
@@ -20,10 +20,11 @@ const checkHealth = async (req, res) => {
       logger.info('Health check successful');
       statsd.increment('endpoint.health')
       res.set('Cache-control', 'no-cache');
-      res.status(200).send();
+      logger.info('Health check successful');
+      return res.status(200).send();
     } catch (error) {
       logger.fatal('Health check failed', error);
-      res.status(503).send();
+      return res.status(503).send();
     }
   }
 };

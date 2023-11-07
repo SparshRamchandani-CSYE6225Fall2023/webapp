@@ -6,6 +6,9 @@ import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
 import urlValidator from "../validators/urlValidator.js";
 import logger from "../configs/logger.config.js";
+import StatsD from 'node-statsd';
+
+const statsd = new StatsD({ host: 'localhost', port: 8125 }); // Adjust the host and port as needed
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
@@ -25,6 +28,7 @@ assignmentRouter.get("/",basicAuthenticator, queryParameterValidators, async (re
     attributes: { exclude: ["user_id"] },
   });
   logger.info("Assignment list is ",assignmentList);
+  statsd.increment('endpoint.getAllAssignment')
   res.status(200).json(assignmentList);
 });
 
@@ -39,6 +43,7 @@ assignmentRouter.get("/:id",basicAuthenticator, queryParameterValidators,async (
     return res.status(404).send();
   } else {
     logger.info("Assignment with the follwing id found",assignmentId,assignmentInfo)
+    statsd.increment('endpoint.getAssignmentById')
     res.status(200).json(assignmentInfo);
   }
 });
@@ -78,6 +83,7 @@ assignmentRouter.post("/", basicAuthenticator,queryParameterValidators, async (r
   const newAssignment = await assignmentDb.create(tempAssignment);
   logger.info("New assignment created",newAssignment);
   delete newAssignment.dataValues.user_id;
+  statsd.increment('endpoint.createAssignment')
   res.status(201).json(newAssignment);
 });
 
@@ -89,15 +95,19 @@ assignmentRouter.delete("/:id", basicAuthenticator,queryParameterValidators, asy
       });
 
     if (_.isEmpty(assignmentInfo)) {
+        logger.error("Assignment with the follwing id not found",assignmentId);
         return res.status(404).send();
       } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
+        logger.warn("Your are not authorized user");
         return res.status(403).json({ error: "Your are not authorized user" });
       }
   
   await db.assignments.destroy({ where: { assignment_id: assignmentId } });
-
+  logger.info("Assignment deleted with the following id",assignmentId);
+  statsd.increment('endpoint.deleteAssignment');
   return res.status(204).json();
 }catch(err){
+    logger.error("Assignment with the follwing id not found",assignmentId);
     res.status(404).send();
   }
 });
@@ -108,6 +118,7 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validateUpdateRequest(req);
   if (isNotValid) {
+    logger.error("Invalid request body",errorMessage);
     return res.status(400).json({ errorMessage });
   }
 
@@ -117,8 +128,10 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
       });
  
     if (_.isEmpty(assignmentInfo)) {
+        logger.error("Assignment with the follwing id not found",assignmentId);
         return res.status(404).send();
       } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
+        logger.warn("Your are not authorized user");
         return res.status(403).json({ error: "Your are not authorized user" });
       }
 
@@ -130,6 +143,7 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   );
 
   if (extraKeys.length > 0) {
+    logger.error("Invalid keys in the request",extraKeys);
     return res.status(400).json({
       errorMessage: `Invalid keys in the request: ${extraKeys.join(", ")}`,
     });
@@ -154,9 +168,11 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   await db.assignments.update(updatedAssignment, {
     where: { assignment_id: assignmentId },
   });
-
+  logger.info("Assignment updated with the following id",assignmentId);
+  statsd.increment('endpoint.updateAssignment');
   return res.status(204).end(); //add success messgae
 }catch(err){
+    logger.error("Assignment with the following id not found",assignmentId);
     res.status(404).send();
 }
 
