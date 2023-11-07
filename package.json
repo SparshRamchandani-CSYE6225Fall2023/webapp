@@ -4,7 +4,7 @@
   "description": "This is cloud project",
   "main": "app.js",
   "scripts": {
-    "test": "jest --handle=option",
+    "test": "jest --handle=option --detectOpenHandles --forceExit",
     "start": "nodemon app.js"
   },
   "type": "module",
