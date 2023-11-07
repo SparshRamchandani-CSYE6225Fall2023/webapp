@@ -3,7 +3,7 @@ name: Build AMI after PR Merge
 on:
     push:
         branches:
-         - log-1
+         - main
 
 jobs:
   build-ami:
