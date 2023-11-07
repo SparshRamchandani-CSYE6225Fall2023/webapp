@@ -4,7 +4,7 @@
   "description": "This is cloud project",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --handle=option",
     "start": "nodemon app.js"
   },
   "type": "module",
