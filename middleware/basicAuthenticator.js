@@ -3,8 +3,31 @@ import _ from 'lodash';
 import db from "../dbSetup.js";
 import bcrypt from "bcryptjs";
 import logger from "../configs/logger.config.js";
+import StatsD from "node-statsd";
+
+const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
 
 export default async (req,res,next)=>{
+    switch (req.method) {
+        case 'POST':
+            statsd.increment('endpoint.createAssignment');
+          break;
+        case 'GET':
+          // Check if it's a single assignment or all assignments
+          if (req.params.id) {
+            // GET by id
+            statsd.increment('endpoint.getAssignmentById');
+          } else {
+            // GetAll assignments
+            statsd.increment('endpoint.getAllAssignment');
+          }
+          break;
+        case 'PUT':
+            statsd.increment('endpoint.updateAssignment');
+          break;
+        case 'DELETE':
+            statsd.increment('endpoint.deleteAssignment');
+      }
     
     const authHeader= req.headers.authorization;
     
