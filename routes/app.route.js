@@ -2,9 +2,9 @@ import sequelize from "../sequelize.js";
 import logger from "../configs/logger.config.js";
 import StatsD from "node-statsd";
 
-const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
 
 const checkHealth = async (req, res) => {
+  const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
   statsd.increment("endpoint.health");
   try {
     if (req.method !== "GET") {

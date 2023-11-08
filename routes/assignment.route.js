@@ -53,14 +53,17 @@ assignmentRouter.get(
         where: { assignment_id: assignmentId },
       });
       if (_.isEmpty(assignmentInfo)) {
-        logger.error("Assignment with the following id not found", assignmentId);
+        logger.error(
+          "Assignment with the following id not found",
+          assignmentId
+        );
         return res.status(404).send();
       } else {
         logger.info("Assignment with the following id found", assignmentInfo);
         return res.status(200).json(assignmentInfo);
       }
     } catch (err) {
-      logger.error("Assignment with the follwing id not found", assignmentId);
+      logger.error("Assignment with the following id not found", assignmentId);
       res.status(404).send();
     }
   }
@@ -144,7 +147,7 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   const { id: assignmentId } = req.params;
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validateUpdateRequest(req);
-    statsd.increment("endpoint.updateAssignment");
+  statsd.increment("endpoint.updateAssignment");
   if (isNotValid) {
     logger.error("Invalid request body", errorMessage);
     return res.status(400).json({ errorMessage });
