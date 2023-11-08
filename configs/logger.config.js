@@ -9,10 +9,10 @@ const myFormat = printf(({ level, message, timestamp, ...meta }) => {
   }`;
 });
 
-const isProductionDemo = process.env.ENVIRONMENT === 'prod';
+// const isProductionDemo = process.env.ENVIRONMENT === 'prod';
 
 const logger = createLogger({
-  level: isProductionDemo ? 'warn' : 'debug',
+  // level: isProductionDemo ? 'warn' : 'debug',
   format: combine(timestamp(), splat(), myFormat),
   transports: [
     new transports.File({ filename: `${appRoot.path}/logs/webapp.log` }),
