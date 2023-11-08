@@ -31,11 +31,11 @@ assignmentRouter.get(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
+    statsd.increment("endpoint.getAllAssignment");
     const assignmentList = await assignmentDb.findAll({
       attributes: { exclude: ["user_id"] },
     });
     logger.info("Assignment list is ", assignmentList);
-    statsd.increment("endpoint.getAllAssignment");
     res.status(200).json(assignmentList);
   }
 );
@@ -46,6 +46,7 @@ assignmentRouter.get(
   queryParameterValidators,
   async (req, res) => {
     const { id: assignmentId } = req.params;
+    statsd.increment("endpoint.getAssignmentById");
     try {
       const assignmentInfo = await db.assignments.findOne({
         attributes: { exclude: ["user_id"] },
@@ -56,7 +57,6 @@ assignmentRouter.get(
         return res.status(404).send();
       } else {
         logger.info("Assignment with the following id found", assignmentInfo);
-        statsd.increment("endpoint.getAssignmentById");
         return res.status(200).json(assignmentInfo);
       }
     } catch (err) {
@@ -71,6 +71,7 @@ assignmentRouter.post(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
+    statsd.increment("endpoint.createAssignment");
     // add Validation for empty body and missing fields
     const expectedKeys = ["name", "points", "num_of_attemps", "deadline"];
     // Check if there are any extra keys in the request body
@@ -105,7 +106,6 @@ assignmentRouter.post(
     const newAssignment = await assignmentDb.create(tempAssignment);
     logger.info("New assignment created", newAssignment);
     delete newAssignment.dataValues.user_id;
-    statsd.increment("endpoint.createAssignment");
     res.status(201).json(newAssignment);
   }
 );
@@ -115,6 +115,7 @@ assignmentRouter.delete(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
+    statsd.increment("endpoint.deleteAssignment");
     const { id: assignmentId } = req.params;
     try {
       const assignmentInfo = await db.assignments.findOne({
@@ -131,7 +132,6 @@ assignmentRouter.delete(
 
       await db.assignments.destroy({ where: { assignment_id: assignmentId } });
       logger.info("Assignment deleted with the following id", assignmentId);
-      statsd.increment("endpoint.deleteAssignment");
       return res.status(204).json();
     } catch (err) {
       logger.error("Assignment with the follwing id not found", assignmentId);
@@ -142,14 +142,13 @@ assignmentRouter.delete(
 
 assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   const { id: assignmentId } = req.params;
-
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validateUpdateRequest(req);
+    statsd.increment("endpoint.updateAssignment");
   if (isNotValid) {
     logger.error("Invalid request body", errorMessage);
     return res.status(400).json({ errorMessage });
   }
-
   try {
     const assignmentInfo = await db.assignments.findOne({
       where: { assignment_id: assignmentId },
@@ -197,7 +196,6 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
       where: { assignment_id: assignmentId },
     });
     logger.info("Assignment updated with the following id", assignmentId);
-    statsd.increment("endpoint.updateAssignment");
     return res.status(204).end(); //add success messgae
   } catch (err) {
     logger.error("Assignment with the following id not found", assignmentId);
