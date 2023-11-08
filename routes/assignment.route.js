@@ -6,9 +6,9 @@ import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
 import urlValidator from "../validators/urlValidator.js";
 import logger from "../configs/logger.config.js";
-import StatsD from "node-statsd";
+// import StatsD from "node-statsd";
 
-const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
+// const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
@@ -31,7 +31,7 @@ assignmentRouter.get(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
-    statsd.increment("endpoint.getAllAssignment");
+    // statsd.increment("endpoint.getAllAssignment");
     const assignmentList = await assignmentDb.findAll({
       attributes: { exclude: ["user_id"] },
     });
@@ -46,7 +46,7 @@ assignmentRouter.get(
   queryParameterValidators,
   async (req, res) => {
     const { id: assignmentId } = req.params;
-    statsd.increment("endpoint.getAssignmentById");
+    // statsd.increment("endpoint.getAssignmentById");
     try {
       const assignmentInfo = await db.assignments.findOne({
         attributes: { exclude: ["user_id"] },
@@ -74,7 +74,7 @@ assignmentRouter.post(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
-    statsd.increment("endpoint.createAssignment");
+    // statsd.increment("endpoint.createAssignment");
     // add Validation for empty body and missing fields
     const expectedKeys = ["name", "points", "num_of_attemps", "deadline"];
     // Check if there are any extra keys in the request body
@@ -118,7 +118,7 @@ assignmentRouter.delete(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
-    statsd.increment("endpoint.deleteAssignment");
+    // statsd.increment("endpoint.deleteAssignment");
     const { id: assignmentId } = req.params;
     try {
       const assignmentInfo = await db.assignments.findOne({
@@ -147,7 +147,7 @@ assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
   const { id: assignmentId } = req.params;
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validateUpdateRequest(req);
-  statsd.increment("endpoint.updateAssignment");
+  // statsd.increment("endpoint.updateAssignment");
   if (isNotValid) {
     logger.error("Invalid request body", errorMessage);
     return res.status(400).json({ errorMessage });
