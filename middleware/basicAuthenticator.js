@@ -34,8 +34,8 @@ export default async (req,res,next)=>{
     if(_.isEmpty(authHeader)){
         //Authentication header is missing
         res.setHeader('WWW-Authenticate', 'Basic');
-        logger.warn("You are not authorized user");
-        return res.status(403).json({error:"You are not authorized user"});
+        logger.warn("Authentication header is missing");
+        return res.status(401).json({error:"Authentication header is missing"});
     }   
     const [username,password]= new Buffer.from(authHeader.split(' ')[1],
     'base64').toString().split(':');
@@ -50,19 +50,19 @@ export default async (req,res,next)=>{
             if(!isMatch){
                 res.setHeader('WWW-Authenticate', 'Basic');
                 logger.warn("You are not authorized user");
-                return res.status(401).json({error:"You are not authorized user"});
+                return res.status(403).json({error:"You are not authorized user"});
             }
             req.authUser=authUser.dataValues;
             delete req.authUser?.password;
         }catch(err){
             logger.warn("You are not authorized user");
-            return res.status(401).json({error:"You are not authorized user"});
+            return res.status(403).json({error:"You are not authorized user"});
         }      
     }else{
          //Authentication header is missing
          res.setHeader('WWW-Authenticate', 'Basic');
          logger.warn("You are not authorized user");
-         return res.status(403).json({error:"You are not authorized user"});
+         return res.status(401).json({error:"You are not authorized user"});
     }
     next();
 }
