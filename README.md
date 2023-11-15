@@ -1,4 +1,3 @@
-test
 # Assignment: Building Custom Machine Images using Pulumi and Packer
 
 ## Learning Objectives

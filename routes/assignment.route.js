@@ -74,8 +74,11 @@ assignmentRouter.post(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
-    // statsd.increment("endpoint.createAssignment");
-    // add Validation for empty body and missing fields
+    let { name, points, num_of_attemps, deadline } = req.body;
+    if(!_.isInteger(points) || !_.isInteger(num_of_attemps)){
+      logger.error("Invalid request body");
+      return res.status(400).json({ error : "Points and Number of Attempts should be Integer" });
+    }
     const expectedKeys = ["name", "points", "num_of_attemps", "deadline"];
     // Check if there are any extra keys in the request body
     const extraKeys = Object.keys(req.body).filter(
@@ -88,8 +91,7 @@ assignmentRouter.post(
         errorMessage: `Invalid keys in the request: ${extraKeys.join(", ")}`,
       });
     }
-
-    let { name, points, num_of_attemps, deadline } = req.body;
+   
 
     const { isError: isNotValid, errorMessage } =
       assignmentValidator.validatePostRequest(req);
@@ -118,7 +120,11 @@ assignmentRouter.delete(
   basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
-    // statsd.increment("endpoint.deleteAssignment");
+    const length = req.headers["content-length"];
+    if ((req.method === "DELETE" && length > 0)) {
+      logger.error("Bad Request on health check, Query parameters not allowed");
+      return res.status(400).send();
+    }
     const { id: assignmentId } = req.params;
     try {
       const assignmentInfo = await db.assignments.findOne({
@@ -144,6 +150,11 @@ assignmentRouter.delete(
 );
 
 assignmentRouter.put("/:id", basicAuthenticator, async (req, res) => {
+  let {  points, num_of_attemps } = req.body;
+    if(!_.isInteger(points) || !_.isInteger(num_of_attemps)){
+      logger.error("Invalid request body");
+      return res.status(400).json({ error : "Points and Number of Attempts should be Integer" });
+    }
   const { id: assignmentId } = req.params;
   const { isError: isNotValid, errorMessage } =
     assignmentValidator.validateUpdateRequest(req);
