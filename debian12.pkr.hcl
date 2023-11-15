@@ -63,6 +63,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "./configs/cloudwatch-agent-config.json"
+    destination = "/opt/cloudwatch-agent-config.json"
+  }
+
+  provisioner "file" {
     direction   = "upload"
     source      = "./artifacts/webapp.zip"
     destination = "/tmp/webapp.zip"
@@ -102,11 +107,8 @@ build {
       "sudo systemctl status webapp",
       "sudo systemctl enable amazon-cloudwatch-agent",
       "sudo systemctl start amazon-cloudwatch-agent",
-
-
     ]
   }
-
 
   post-processor "shell-local" {
     inline = [
