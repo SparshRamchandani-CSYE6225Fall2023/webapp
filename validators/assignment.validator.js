@@ -64,7 +64,19 @@ const  validateUpdateRequest= (req)=>{
    return {isError,errorMessage};
   }
 
+const validateAssignmentPostRequest = (req) => {
+      const { submission_url } = req.body;
+      let isError = false;
+      let errorMessage = "";
+      if (_.isNil(submission_url) || _.isEmpty(submission_url)) {
+         isError = true;
+         errorMessage += "Submission URL cannot be null or empty\n";
+      }
+      return { isError, errorMessage };
+   };
+
 export default {
     validatePostRequest,
-    validateUpdateRequest
+    validateUpdateRequest,
+    validateAssignmentPostRequest,
 }
