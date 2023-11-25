@@ -1,6 +1,12 @@
 name: Build AMI after PR Merge
 
 on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main # Assuming your primary branch is named 'main'
   push:
       branches:
         - main

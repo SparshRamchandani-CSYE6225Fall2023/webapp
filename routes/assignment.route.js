@@ -4,7 +4,7 @@ import basicAuthenticator from "../middleware/basicAuthenticator.js";
 import _ from "lodash";
 import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
-import urlValidator from "../validators/urlValidator.js";
+import submissionUrlValidator from "../validators/submissionUrlValidator.js";
 import logger from "../configs/logger.config.js";
 // import StatsD from "node-statsd";
 
@@ -114,6 +114,63 @@ assignmentRouter.post(
     res.status(201).json(newAssignment);
   }
 );
+
+assignmentRouter.post(
+  "/:id/submissions",
+  basicAuthenticator,
+  queryParameterValidators,
+  async (req, res) => {
+    const { id: assignmentId } = req.params;
+    const { isError: isNotValid, errorMessage } =
+      assignmentValidator.validateAssignmentPostRequest(req);
+    if (isNotValid) {
+      logger.error("Invalid request body", errorMessage);
+      return res.status(400).json({ errorMessage });
+    }
+    const { submission_url } = req.body;
+    if (!submissionUrlValidator(submission_url)) {
+      logger.error("Invalid Submission URL");
+      return res.status(400).json({ errorMessage: "Invalid Submission URL" });
+    }
+    try {
+      const assignmentInfo = await db.assignments.findOne({
+        where: { assignment_id: assignmentId },
+      });
+      const count = await db.submissions.count({
+        where: { assignment_id: assignmentId },
+      });
+
+      if (_.isEmpty(assignmentInfo)) {
+        logger.error("Assignment with the follwing id not found", assignmentId);
+        return res.status(404).send();
+      } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
+        logger.warn("Your are not authorized user");
+        return res.status(403).json({ error: "Your are not authorized user" });
+      }else if(assignmentInfo.deadline < new Date()){
+        logger.warn("Assignment deadline is over");
+        return res.status(400).json({ error: "Assignment deadline is over" });
+      }else if(count >= assignmentInfo.num_of_attemps){
+        logger.warn("You have reached the maximum number of attempts");
+        return res.status(400).json({ error: "You have reached the maximum number of attempts" });
+      }
+
+      const tempSubmission = {
+        submission_url,
+        assignment_id: assignmentId,
+        user_id: req?.authUser?.user_id,
+      };
+      //insert the data to data base
+      const newSubmission = await db.submissions.create(tempSubmission);
+      logger.info("New submission created", newSubmission);
+      delete newSubmission.dataValues.user_id;
+      res.status(201).json(newSubmission);
+    } catch (err) {
+      logger.error("Assignment with the following id not found", assignmentId);
+      res.status(404).send();
+    }
+  }
+)
+  
 
 assignmentRouter.delete(
   "/:id",

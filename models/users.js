@@ -5,9 +5,9 @@ export default (sequelize, DataTypes) => {
     "user",
     {
       user_id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.UUID,
         primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
       },
       first_name: {
         type: DataTypes.STRING,
