@@ -26,7 +26,7 @@ db.users.hasMany(db.assignments,{foreignKey:{name :"user_id"},onDelete:"CASCADE"
 // db.users.hasMany(db.submissions,{foreignKey:{name :"user_id"},onDelete:"CASCADE",field:"user_id",allowNull:false})
 db.assignments.hasMany(db.submissions,{foreignKey:{name :"assignment_id"},onDelete:"CASCADE",field:"assignment_id",allowNull:false})
 
-db.sequelize.sync({force:true}).then(()=>{
+db.sequelize.sync({force:false}).then(()=>{
     console.log("yes re-sync done!")
     logger.info("yes re-sync done!")
     insertDataFromCSV()
