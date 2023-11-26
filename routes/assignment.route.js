@@ -14,6 +14,7 @@ dotenv.config();
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
+const sns = new aws.SNS();
 
 assignmentRouter.use("/", async (req, res, next) => {
   if (
@@ -186,7 +187,8 @@ assignmentRouter.post(
       delete newSubmission.dataValues.user_id;
       res.status(201).json(newSubmission);
     } catch (err) {
-      logger.error("Assignment with the following id not found", assignmentId);
+      logger.error("Assignment with the following id not found", err);
+      console.log(err);
       res.status(404).send();
     }
   }
