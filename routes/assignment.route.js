@@ -1,14 +1,16 @@
 import { Router } from "express";
-import db from "../dbSetup.js";
-import basicAuthenticator from "../middleware/basicAuthenticator.js";
 import _ from "lodash";
+import aws from "aws-sdk";
+import dotenv from 'dotenv';
+
+import basicAuthenticator from "../middleware/basicAuthenticator.js";
+import db from "../dbSetup.js";
 import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
 import submissionUrlValidator from "../validators/submissionUrlValidator.js";
 import logger from "../configs/logger.config.js";
-// import StatsD from "node-statsd";
 
-// const statsd = new StatsD({ host: "localhost", port: 8125 }); // Adjust the host and port as needed
+dotenv.config();
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
@@ -162,6 +164,25 @@ assignmentRouter.post(
       //insert the data to data base
       const newSubmission = await db.submissions.create(tempSubmission);
       logger.info("New submission created", newSubmission);
+       // Post the URL to the SNS topic along with user info
+       const snsTopicArn = process.env.SNSTopicARN; // Replace with your actual SNS topic ARN
+       const snsMessage = {
+         submission_url: newSubmission.submission_url,
+         user_email: req?.authUser?.email,
+       };
+ 
+       const snsParams = {
+         TopicArn: snsTopicArn,
+         Message: JSON.stringify(snsMessage),
+       };
+ 
+       sns.publish(snsParams, (snsError, snsData) => {
+         if (snsError) {
+           logger.error("Error publishing to SNS:", snsError);
+         } else {
+           logger.info("Message published to SNS:", snsData);
+         }
+       });
       delete newSubmission.dataValues.user_id;
       res.status(201).json(newSubmission);
     } catch (err) {
