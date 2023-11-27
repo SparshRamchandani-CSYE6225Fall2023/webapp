@@ -14,6 +14,7 @@ dotenv.config();
 
 const assignmentRouter = Router();
 const assignmentDb = db.assignments;
+aws.config.update({ region: process.env.AWS_REGION });
 const sns = new aws.SNS();
 
 assignmentRouter.use("/", async (req, res, next) => {
