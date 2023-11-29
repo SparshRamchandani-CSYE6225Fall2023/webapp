@@ -31,6 +31,15 @@ assignmentRouter.use("/", async (req, res, next) => {
   next();
 });
 
+assignmentRouter.use("/:id/submissions", async (req, res, next) => {
+  if (req.method !== "POST") {
+    logger.warn("Method not allowed");
+    return res.status(405).send();
+  }
+  next();
+}
+);
+
 assignmentRouter.get(
   "/",
   basicAuthenticator,
@@ -125,6 +134,18 @@ assignmentRouter.post(
   userAuthenticator,
   queryParameterValidators,
   async (req, res) => {
+    const expectedKeys = ["submission_url"];
+    // Check if there are any extra keys in the request body
+    const extraKeys = Object.keys(req.body).filter(
+      (key) => !expectedKeys.includes(key)
+    );
+
+    if (extraKeys.length > 0) {
+      logger.error("Invalid keys in the request", extraKeys);
+      return res.status(400).json({
+        errorMessage: `Invalid keys in the request: ${extraKeys.join(", ")}`,
+      });
+    }
     const { id: assignmentId } = req.params;
     const { isError: isNotValid, errorMessage } =
       assignmentValidator.validateAssignmentPostRequest(req);
