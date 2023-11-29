@@ -23,7 +23,7 @@ db.assignments = assignmentsModel(sequelize,DataTypes)
 db.submissions = submissionModel(sequelize,DataTypes)
 
 db.users.hasMany(db.assignments,{foreignKey:{name :"user_id"},onDelete:"CASCADE",field:"user_id",allowNull:false})
-// db.users.hasMany(db.submissions,{foreignKey:{name :"user_id"},onDelete:"CASCADE",field:"user_id",allowNull:false})
+db.users.hasMany(db.submissions,{foreignKey:{name :"user_id"},onDelete:"CASCADE",field:"user_id",allowNull:false})
 db.assignments.hasMany(db.submissions,{foreignKey:{name :"assignment_id"},onDelete:"CASCADE",field:"assignment_id",allowNull:false})
 
 db.sequelize.sync({force:false}).then(()=>{

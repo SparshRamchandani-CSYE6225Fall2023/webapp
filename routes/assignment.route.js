@@ -4,6 +4,7 @@ import aws from "aws-sdk";
 import dotenv from 'dotenv';
 
 import basicAuthenticator from "../middleware/basicAuthenticator.js";
+import userAuthenticator from "../middleware/userAuthenticator.js";
 import db from "../dbSetup.js";
 import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
@@ -121,7 +122,7 @@ assignmentRouter.post(
 
 assignmentRouter.post(
   "/:id/submissions",
-  basicAuthenticator,
+  userAuthenticator,
   queryParameterValidators,
   async (req, res) => {
     const { id: assignmentId } = req.params;
@@ -141,16 +142,21 @@ assignmentRouter.post(
         where: { assignment_id: assignmentId },
       });
       const count = await db.submissions.count({
-        where: { assignment_id: assignmentId },
+        where: {
+          assignment_id: assignmentId,
+          user_id: req?.authUser?.user_id,
+         }, 
       });
 
       if (_.isEmpty(assignmentInfo)) {
         logger.error("Assignment with the follwing id not found", assignmentId);
         return res.status(404).send();
-      } else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
-        logger.warn("Your are not authorized user");
-        return res.status(403).json({ error: "Your are not authorized user" });
-      }else if(assignmentInfo.deadline < new Date()){
+      } 
+      // else if (assignmentInfo.user_id !== req?.authUser?.user_id) {
+      //   logger.warn("Your are not authorized user");
+      //   return res.status(403).json({ error: "Your are not authorized user" });  
+      // }
+      else if(assignmentInfo.deadline < new Date()){
         logger.warn("Assignment deadline is over");
         return res.status(400).json({ error: "Assignment deadline is over" });
       }else if(count >= assignmentInfo.num_of_attemps){
