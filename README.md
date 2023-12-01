@@ -222,9 +222,6 @@ For integration tests in GitHub Actions, set up a local database on the EC2 inst
 - Document any modifications made to the setup or configuration for future reference.
 - Adhere to security best practices and ensure secure storage and access of sensitive information.
 
-For further assistance or inquiries, please contact the support team at [support@example.com](mailto:support@example.com).
-
----
 By following these instructions, you can successfully set up and manage the web application along with the necessary configurations for autorun and integration testing.
 
 
