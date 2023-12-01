@@ -4,7 +4,6 @@ import aws from "aws-sdk";
 import dotenv from 'dotenv';
 
 import basicAuthenticator from "../middleware/basicAuthenticator.js";
-import userAuthenticator from "../middleware/userAuthenticator.js";
 import db from "../dbSetup.js";
 import assignmentValidator from "../validators/assignment.validator.js";
 import queryParameterValidators from "../validators/queryParameterValidators.js";
@@ -131,7 +130,7 @@ assignmentRouter.post(
 
 assignmentRouter.post(
   "/:id/submissions",
-  userAuthenticator,
+  basicAuthenticator,
   queryParameterValidators,
   async (req, res) => {
     const expectedKeys = ["submission_url"];
