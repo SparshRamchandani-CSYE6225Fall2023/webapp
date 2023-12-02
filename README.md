@@ -224,6 +224,7 @@ For integration tests in GitHub Actions, set up a local database on the EC2 inst
 
 By following these instructions, you can successfully set up and manage the web application along with the necessary configurations for autorun and integration testing.
 
+test
 
 
 
