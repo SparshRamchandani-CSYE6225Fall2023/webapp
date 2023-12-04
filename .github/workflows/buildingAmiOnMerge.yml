@@ -55,4 +55,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          packer build debian12.pkr.hcl
+          packer build debian12.pkr.hcl 2>&1 | sudo tee output.txt
+          tail -2 output.txt | head -2 | awk 'match($0, /ami-.*/) { print substr($0, RSTART, RLENGTH) }' > sudo ami.txt
+          
+
+      - name: Get AMI ID
+        run: echo "The AMI ID is ${{ steps.ami_build.outputs.ami_id }}"
