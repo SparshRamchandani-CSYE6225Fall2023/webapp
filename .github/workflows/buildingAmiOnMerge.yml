@@ -21,34 +21,34 @@ jobs:
 
       
 
-      # - name: Setup envirornment variables
-      #   run: |
-      #     touch .env
-      #     echo ENVIRONMENT=${{ secrets.ENVIRONMENT }} >> .env
-      #     echo =${{ secrets.PGHOST }} >> .env
-      #     echo PGHOST=${{ secrets.PGHOST }} >> .env
-      #     echo PGDATABASE=${{ secrets.PGDATABASE}} >> .env
-      #     echo PGUSER=${{ secrets.PGUSER }} >> .env
-      #     echo PGPASSWORD=${{ secrets.PGPASSWORD }} >> .env
+      - name: Setup envirornment variables
+        run: |
+          touch .env
+          echo ENVIRONMENT=${{ secrets.ENVIRONMENT }} >> .env
+          echo =${{ secrets.PGHOST }} >> .env
+          echo PGHOST=${{ secrets.PGHOST }} >> .env
+          echo PGDATABASE=${{ secrets.PGDATABASE}} >> .env
+          echo PGUSER=${{ secrets.PGUSER }} >> .env
+          echo PGPASSWORD=${{ secrets.PGPASSWORD }} >> .env
 
-      # - name: Create Application Artifact
-      #   run: |
-      #    mkdir artifacts
-      #    zip -r artifacts/webapp.zip . -x "*.git*"
+      - name: Create Application Artifact
+        run: |
+         mkdir artifacts
+         zip -r artifacts/webapp.zip . -x "*.git*"
 
 
-      # - name: Install Packer
-      #   run: |
-      #     PACKER_VERSION="1.9.4"  # Specify your desired version
-      #     wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
-      #     unzip packer_${PACKER_VERSION}_linux_amd64.zip
-      #     sudo mv packer /usr/local/bin/
-      #     packer --version
+      - name: Install Packer
+        run: |
+          PACKER_VERSION="1.9.4"  # Specify your desired version
+          wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+          unzip packer_${PACKER_VERSION}_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          packer --version
 
-      # - name: Initialize Packer
-      #   run: packer init debian12.pkr.hcl
+      - name: Initialize Packer
+        run: packer init debian12.pkr.hcl
 
-      # - name: Build Custom AMI
+      - name: Build Custom AMI
         id: ami_build
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
