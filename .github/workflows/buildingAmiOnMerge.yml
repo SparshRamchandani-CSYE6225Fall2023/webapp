@@ -101,4 +101,8 @@ jobs:
               echo -ne "."
               sleep 10
             done
+
+      - name: Print manifest.json
+        run: |
+          cat manifest.json
             
