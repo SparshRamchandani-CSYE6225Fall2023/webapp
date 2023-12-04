@@ -56,8 +56,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           packer build debian12.pkr.hcl 2>&1 | sudo tee output.txt
-          tail -2 output.txt | head -2 | awk 'match($0, /ami-.*/) { print substr($0, RSTART, RLENGTH) }' > sudo ami.txt
-          
+          AMI_ID=$(grep 'artifact,0,id' output.txt | cut -d, -f6 | cut -d: -f2)          
 
-      - name: Get AMI ID
-        run: echo "The AMI ID is ${{ steps.ami_build.outputs.ami_id }}"
+      - name: Store AMI ID
+        run: echo "AMI_ID=${{ steps.ami_build.outputs.AMI_ID }}" >> $GITHUB_ENV
