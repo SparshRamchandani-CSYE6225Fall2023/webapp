@@ -61,5 +61,4 @@ jobs:
       - name: Extract AMI ID
         id: extract_ami_id
         run: |
-          AMI_ID=$(grep -Eo 'ami-[a-f0-9]{{8,17}}' output.txt | tail -1)
-          echo "The AMI ID is: $AMI_ID"
+          echo "The AMI ID is: ${{ steps.ami_build.outputs.ami_id }}"
