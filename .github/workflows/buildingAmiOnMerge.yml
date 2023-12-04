@@ -58,15 +58,47 @@ jobs:
           packer build debian12.pkr.hcl
        
 
-      - name: Get Latest AMI ID
-        id: get_ami_id
+          - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1-node16
+          with:
+            aws-access-key-id: ${{ secrets.AWS_DEMO_ACCESS_KEY }}
+            aws-secret-access-key: ${{ secrets.AWS_DEMO_SECRET_KEY }}
+            aws-region: us-east-1
+  
+      - name: Instance Refresh automation / Continuous Delivery
         run: |
-            # Use grep to extract the dynamic portion of the AMI name
-            DYNAMIC_PART=$(echo "packer-debian12-ami-1701395286" | grep -oE '[0-9]+')
+            sudo apt-get install jq
+            ASG_NAME=${{secrets.AutoScalingGroupNAME }}  
+            LAUNCH_CONFIG=${{secrets.LaunchTemplateName }}
+            IMAGE=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d':' -f2)
+            IMAGE_ID=$(jq -n \
+              --arg img "$IMAGE" \
+              '{"ImageId": $img}')
+            aws ec2 create-launch-template-version \
+              --launch-template-name "$LAUNCH_CONFIG" \
+              --version-description updateAMI --source-version 1 \
+              --launch-template-data="$IMAGE_ID"
+            TEMPLATE_VERSION=$(aws ec2 describe-launch-template-versions --launch-template-name="$LAUNCH_CONFIG" \
+              --filters="Name=is-default-version,Values=false" \
+              --query 'sort_by(LaunchTemplateVersions, &CreateTime)[-1].[VersionNumber]' --output text)
+            aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME \
+              --launch-template LaunchTemplateName="$LAUNCH_CONFIG",Version=$TEMPLATE_VERSION
+            aws autoscaling start-instance-refresh \
+              --auto-scaling-group-name $ASG_NAME --strategy Rolling
+            printf "Instance refresh in progress"
+            while true;
+            do
+              instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name $ASG_NAME \
+                --query "InstanceRefreshes[0].Status" --output text)
+              if [ "$instance_refresh_status" = "Successful" ]; then
+                printf "\nInstance refresh successful!"
+                break
+              fi
+              if [ "$instance_refresh_status" = "Cancelling" ] || [ "$instance_refresh_status" = "Cancelled" ] || [ "$instance_refresh_status" = "Failed" ]; then
+                printf "\nInstance refresh failed!"
+                exit 1
+              fi
+              echo -ne "."
+              sleep 10
+            done
             
-            # Use the dynamic part in the AWS CLI command
-            AMI_ID=$(aws ec2 describe-images \
-              --filters "Name=name,Values=packer-debian12-ami-$DYNAMIC_PART" \
-              --query "Images | [0].ImageId" \
-              --output text)
-            echo "Latest AMI ID: $AMI_ID"
