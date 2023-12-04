@@ -115,4 +115,8 @@ build {
       "echo 'Build Successful !!! Your debian AMI is ready'",
     ]
   }
+
+  post-processor "manifest" {
+    output = "manifest.json"
+  }
 }
