@@ -1,230 +1,246 @@
-# Assignment: Building Custom Machine Images using Pulumi and Packer
+# Cloud Native Web Application
 
-## Learning Objectives
+## Overview
 
-The objective of this assignment is to build custom machine images that can be utilized to create virtual machines in the cloud using Pulumi for Infrastructure as Code.
+Welcome to the Cloud Native Web Application API for the Fall 2023 semester (Assignment 9). This API is designed to support the management of assignments and submissions within the context of a cloud-native web application. The API is documented using the OpenAPI Specification (OAS) 3.0 and is hosted on SwaggerHub for easy access and interaction.
 
-## Packer & AMIs - Building Custom Application AMI using Packer
+## Authentication
 
-To complete this assignment, follow the steps outlined below:
+Some operations in this API are restricted to authenticated users. To access these authenticated endpoints, users must provide appropriate credentials. If you are using the SwaggerHub API Auto Mocking feature, authentication is simulated for testing purposes.
 
-1. Use Debian 12 as your source image to create a custom AMI using Packer.
-2. Ensure that all AMIs you build are private. This means that only you can deploy EC2 instances from them.
-3. All AMI builds should occur in your DEV AWS account and be shared with your DEMO account.
-4. Configure the AMI builds to operate in your default VPC.
-5. Include everything necessary to run your application and the application binary itself in the AMI. For instance, if you are using Tomcat to run your Java web application, your AMI must have Java & Tomcat installed. Additionally, ensure that the Tomcat service will start up when an instance is launched. If you are using Python, make sure you have the correct version of Python and the necessary libraries installed in the AMI.
-6. Store the Packer template in the same repository as the web application.
-7. Install MySQL/MariaDB/PostgreSQL locally in the AMI specifically for this assignment.
+## Authenticated Endpoints
 
-Please ensure that your Packer template and the steps you follow adhere to the guidelines mentioned above.
+### GET /v1/assignments
+- **Description:** Retrieve a list of all assignments.
+- **Authentication Required:** Yes
 
-Please feel free to reach out for any clarifications or assistance.
+### POST /v1/assignments
+- **Description:** Create a new assignment.
+- **Authentication Required:** Yes
+
+### GET /v1/assignments/{id}
+- **Description:** Get details for a specific assignment.
+- **Authentication Required:** Yes
+
+### DELETE /v1/assignments/{id}
+- **Description:** Delete a specific assignment.
+- **Authentication Required:** Yes
+
+### PUT /v1/assignments/{id}
+- **Description:** Update details for a specific assignment.
+- **Authentication Required:** Yes
+
+### POST /v1/assignments/{id}/submission
+- **Description:** Submit an assignment.
+- **Authentication Required:** Yes
+
+## Public Endpoints
+
+### GET /healthz
+- **Description:** Health Check API for system status.
+- **Authentication Required:** No
+
+## Schemas
+
+The API utilizes the following data schemas:
+
+- **Account:** Represents user account information.
+- **Assignment:** Describes the details of an assignment.
+- **Submission:** Contains information about assignment submissions.
+
+## Usage
+
+Please refer to the OpenAPI documentation for detailed information on request and response formats for each endpoint. The API follows the principles of RESTful design, with clear and intuitive paths for managing assignments and submissions.
+
+## License
+
+This Cloud Native Web Application API is licensed under the Apache 2.0 License. For more details, please refer to the [LICENSE](link_to_license_file) file.
+
+# Build AMI after PR Merge Workflow
+
+This GitHub Actions workflow automates the process of building an Amazon Machine Image (AMI) after a pull request is opened or synchronized with the main branch. Additionally, it triggers the AMI build on each push to the main branch.
+
+## Workflow Details
+
+### Events Triggering Workflow
+
+- **Pull Request Events:**
+  - Triggered on pull request opening or synchronization.
+  - Restricted to the 'main' branch.
+
+- **Push Events:**
+  - Triggered on each push to the 'main' branch.
+
+### Workflow Jobs
+
+#### `build-ami`
+
+This job performs the following steps:
+
+1. **Checkout Repository:**
+   - Uses the `actions/checkout@v2` action to fetch the repository content.
+
+2. **Setup Environment Variables:**
+   - Creates a `.env` file with environment variables required for the application.
+   - Variables include `ENVIRONMENT`, `PGHOST`, `PGDATABASE`, `PGUSER`, and `PGPASSWORD`.
+
+3. **Create Application Artifact:**
+   - Creates a zip file (`webapp.zip`) containing the application artifacts, excluding Git-related files.
+
+4. **Install Packer:**
+   - Downloads and installs Packer, a tool for creating machine and container images.
+   - Specifies the desired Packer version.
+
+5. **Initialize Packer:**
+   - Initializes Packer using the `debian12.pkr.hcl` configuration file.
+
+6. **Build Custom AMI:**
+   - Builds a custom Amazon Machine Image using Packer.
+   - Requires AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION`) stored as secrets.
+
+7. **Configure AWS Credentials:**
+   - Uses the `aws-actions/configure-aws-credentials@v1-node16` action to configure AWS credentials.
+   - Uses credentials from the `AWS_DEMO_ACCESS_KEY`, `AWS_DEMO_SECRET_KEY`, and `AWS_REGION` secrets.
+
+8. **Instance Refresh Automation / Continuous Delivery:**
+   - Installs `jq` for JSON parsing.
+   - Retrieves the latest AMI ID from the Packer build manifest.
+   - Updates the launch template with the new AMI version and triggers an instance refresh on the Auto Scaling Group.
+
+9. **Print manifest.json:**
+   - Outputs the contents of the Packer build manifest (`manifest.json`).
+
+## Usage
+
+1. Ensure that the required secrets (`ENVIRONMENT`, `PGHOST`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_DEMO_ACCESS_KEY`, `AWS_DEMO_SECRET_KEY`, `AutoScalingGroupNAME`, `LaunchTemplateName`) are set in the repository settings.
+
+2. Make sure that Packer and AWS credentials are correctly configured.
+
+3. Trigger the workflow by opening a pull request, synchronizing a pull request, or pushing to the main branch.
+
+4. Monitor the workflow progress and review the output, including the AMI ID in the `manifest.json` file.
 
 ## Additional Notes
 
-Make sure to document any challenges faced and the solutions implemented while completing this assignment. This documentation will be helpful for both your understanding and for potential future references.
+- This workflow assumes the existence of a Packer configuration file named `debian12.pkr.hcl`.
 
-### Further Assistance
+- The `jq` tool is used for parsing JSON in the workflow.
 
-If you encounter any issues or need additional guidance, please don't hesitate to ask for help. Use the resources available to you, including the Pulumi documentation, AWS documentation, and any other relevant resources you find useful.
+- The instance refresh strategy is set to "Rolling" for the Auto Scaling Group.
 
-# Packer Continuous Integration - GitHub Actions Workflow for Status Check
 
-## Objective
 
-The objective of this GitHub Actions workflow is to ensure that all Packer templates undergo essential checks before they are merged into the main branch. These checks will help maintain consistency and prevent potential issues from being introduced into the repository.
 
-## Workflow Details
+# Build CI Workflow
 
-When a pull request is raised, this GitHub Actions workflow will perform the following actions:
-
-1. **Run `packer fmt` Command:** This command ensures that the Packer template is formatted correctly. If the `packer fmt` command modifies the Packer template, the workflow will fail, preventing users from merging the pull request.
-
-2. **Run `packer validate` Command:** This command validates the Packer template. If the template fails to validate, the workflow will fail, preventing users from merging the pull request.
-
-## Setting Up the Workflow
-
-To implement this workflow in your project, follow the steps outlined below:
-
-1. Create a new GitHub Actions workflow YAML file in the `.github/workflows` directory in your repository.
-
-2. Define the necessary steps in the workflow YAML file to execute the `packer fmt` and `packer validate` commands.
-
-3. Configure the workflow to trigger upon pull request creation.
-
-4. Ensure that the necessary dependencies and environment are set up for the commands to run successfully.
-
-5. Test the workflow with various scenarios to verify its effectiveness in catching potential issues in the Packer templates.
-
-## Workflow Customization
-
-Feel free to customize this workflow according to your project's specific requirements. You can add additional steps or commands to perform other checks or validations on the Packer templates.
-
-## Further Assistance
-
-If you encounter any difficulties while setting up or customizing this GitHub Actions workflow, don't hesitate to seek help from the GitHub Actions documentation or the community forums.
-
-# Packer Continuous Integration - GitHub Actions Workflow for Building Packer AMI
-
-## Objective
-
-The objective of this GitHub Actions workflow is to automate the building of a Packer AMI, including the integration test, application artifact creation, and setup of the application within the AMI. This workflow ensures that the AMI is only built and shared with the DEMO account upon successful merging of a pull request.
+This GitHub Actions workflow automates the build and testing process for your application. The workflow is triggered when a pull request is opened or synchronized with the main branch. Additionally, it runs on each push to the main branch.
 
 ## Workflow Details
 
-When a pull request is merged, this GitHub Actions workflow will execute the following actions:
+### Events Triggering Workflow
 
-1. **Run Integration Test:** Execute the integration test to ensure the functionality and integrity of the application.
+- **Pull Request Events:**
+  - Triggered on pull request opening or synchronization.
+  - Restricted to the 'main' branch.
 
-2. **Build Application Artifact:** Build the application artifact (e.g., war, jar, zip) on the GitHub Actions runner itself, ensuring that the artifact is not built within the AMI.
+- **Push Events:**
+  - Triggered on each push to the 'main' branch.
 
-3. **Build the AMI with Application Dependencies:** Create the AMI with the necessary application dependencies and set up the application by copying the application artifacts and configuration files.
+### Workflow Jobs
 
-4. **Share the AMI with DEMO Account:** Ensure that the built AMI is shared with the DEMO account for further testing and deployment purposes.
+#### `build-and-test`
 
-5. **Fail-Safe Mechanism:** If any of the jobs or steps in the workflow fail, prevent the creation of the AMI to maintain the integrity of the build process.
+This job performs the following steps:
 
-## Workflow Configuration
+1. **Checkout Code:**
+   - Uses the `actions/checkout@v2` action to fetch the repository content.
 
-To implement this workflow in your project, follow the steps outlined below:
+2. **Setup PostgreSQL Service:**
+   - Uses a PostgreSQL service with the specified environment variables for database configuration.
+   - Exposes PostgreSQL on port 5432.
+   - Includes health checks to ensure PostgreSQL is ready.
 
-1. Create a new GitHub Actions workflow YAML file in the `.github/workflows` directory in your repository.
+3. **Create Environment File:**
+   - Creates a `.env` file with environment variables required for the application.
+   - Variables include `ENVIRONMENT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`, and `PGHOST`.
 
-2. Define the necessary steps in the workflow YAML file to execute the integration test, build the application artifact, and build the Packer AMI.
+4. **Set up Node.js:**
+   - Uses the `actions/setup-node@v2` action to set up Node.js version 16.x.
 
-3. Configure the workflow to trigger upon the successful merge of a pull request.
+5. **Install Dependencies:**
+   - Runs `npm install` to install project dependencies.
 
-4. Ensure that the IAM user and custom policy are set up correctly in the DEV AWS account, as specified in the setup instructions.
+6. **Run Integration Tests:**
+   - Executes `npm run test` to run integration tests for the application.
 
-5. Test the workflow thoroughly to confirm the successful execution of each step and the sharing of the AMI with the DEMO account.
+## Usage
 
-## Workflow Customization
+1. Ensure that the required secrets (`ENVIRONMENT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`, `PGPORT`, `PGHOST`) are set in the repository settings.
 
-Feel free to customize this workflow according to your project's specific requirements. You can add additional steps or commands to perform other tasks or checks as necessary.
+2. Trigger the workflow by opening a pull request, synchronizing a pull request, or pushing to the main branch.
 
-## Further Assistance
+3. Monitor the workflow progress and review the test results.
 
-If you encounter any difficulties while setting up or customizing this GitHub Actions workflow, please refer to the GitHub Actions documentation or reach out to the community for support.
+## Additional Notes
 
-# Infrastructure as Code with Pulumi
+- The PostgreSQL service is used as a temporary database during the testing process.
 
-## Assignment Objective
+- The workflow assumes the existence of a Node.js project and defines a test script using `npm run test`.
 
-In this assignment, the aim is to update the Pulumi IaC code to include the following resources:
+- The `.env` file is created to provide environment variables for the application.
 
-### Application Security Group
 
-Create an EC2 security group that will be utilized for hosting web applications on your EC2 instances. This security group will be referred to as the application security group. The following configurations should be applied to this security group:
+# Packer Validation and Formatting Check Workflow
 
-- **Ingress Rule Setup:** Allow TCP traffic on the following ports:
-    - Port 22 (SSH)
-    - Port 80 (HTTP)
-    - Port 443 (HTTPS)
-    - The specific port on which your application runs
-- **Access Permissions:** Allow this traffic from anywhere in the world.
+This GitHub Actions workflow automates the validation and formatting checks for your Packer template. The workflow is triggered when a pull request is opened or synchronized with the main branch.
 
-## Steps to Implement
+## Workflow Details
 
-To complete this assignment, follow the steps outlined below:
+### Events Triggering Workflow
 
-1. Update your existing Pulumi infrastructure code to incorporate the creation of the application security group.
+- **Pull Request Events:**
+  - Triggered on pull request opening or synchronization.
+  - Restricted to the 'main' branch.
 
-2. Configure the security group to allow inbound traffic on the specified ports as mentioned above.
+### Workflow Job
 
-3. Ensure that the security group is appropriately associated with your EC2 instances hosting the web applications.
+#### `packer-check`
 
-4. Test the infrastructure deployment to verify that the security group is correctly configured and effectively restricting the traffic to the specified ports.
+This job performs the following steps:
 
-## Best Practices
+1. **Checkout Code:**
+   - Uses the `actions/checkout@v2` action to fetch the repository content.
 
-Consider the following best practices while implementing the changes:
+2. **Create Application Artifact:**
+   - Creates a zip file (`webapp.zip`) containing the application artifacts.
 
-- **Security Best Practices:** Implement security best practices when configuring the application security group to ensure that the EC2 instances are secure and protected from unauthorized access.
+3. **Install Packer:**
+   - Downloads and installs Packer, a tool for creating machine and container images.
+   - Specifies the desired Packer version.
 
-- **Documentation:** Document the changes made in the Pulumi code for future reference and maintain a clear understanding of the implemented configurations.
+4. **Initialize Packer:**
+   - Initializes Packer using the `debian12.pkr.hcl` configuration file.
 
-- **Error Handling:** Implement proper error handling and logging mechanisms to identify any issues that might arise during the deployment process.
+5. **Validate Packer Template:**
+   - Runs `packer validate` to check the syntax and validity of the Packer template (`debian12.pkr.hcl`).
 
-## Further Assistance
+6. **Check Packer Template Formatting:**
+   - Uses `packer fmt -check` to verify the formatting of the Packer template.
+   - If the formatting is incorrect, the workflow fails, and a message prompts the user to format the template using `packer fmt`.
 
-If you encounter any issues or require further guidance while updating the Pulumi IaC code, refer to the Pulumi documentation or seek assistance from the Pulumi community and support channels.
+## Usage
 
-# EC2 Instance Deployment with Pulumi
+1. Ensure that the required Packer configuration file (`debian12.pkr.hcl`) is present in the repository.
 
-## Assignment Objective
+2. Trigger the workflow by opening a pull request or synchronizing a pull request with the main branch.
 
-In this assignment, you are tasked with creating an EC2 instance based on the following specifications. The EC2 instance must be launched within the VPC previously created by your Pulumi Infrastructure as Code (IaC) configuration. Note that the instance should not be launched in the default VPC.
+3. Monitor the workflow progress, and review any validation or formatting issues reported in the workflow logs.
 
-### EC2 Instance Specifications
+## Additional Notes
 
-- **Instance Type:** Choose an appropriate instance type based on your application requirements.
-- **Security Group:** Attach the application security group, as specified in the previous assignment, to this EC2 instance.
-- **EBS Volumes:** Configure the EBS volumes to be terminated when the EC2 instance is terminated.
+- The workflow assumes that the Packer template is located at `debian12.pkr.hcl`.
 
-## Steps to Implement
+- The `packer fmt -check` command is used to ensure consistent formatting of the Packer template.
 
-To complete this assignment, follow the steps outlined below:
-
-1. Update your existing Pulumi infrastructure code to include the creation of the EC2 instance with the provided specifications.
-
-2. Ensure that the EC2 instance is correctly associated with the VPC created by your Pulumi IaC code and not the default VPC.
-
-3. Attach the previously created application security group to the EC2 instance.
-
-4. Configure the EBS volumes to be terminated when the EC2 instance is terminated.
-
-5. Test the infrastructure deployment to verify that the EC2 instance is functioning correctly and that the specified configurations are in place.
-
-## Best Practices
-
-Consider the following best practices while implementing the EC2 instance deployment:
-
-- **Instance Management:** Implement proper instance management practices to ensure efficient usage and cost optimization.
-
-- **Security Compliance:** Ensure that the EC2 instance adheres to necessary security compliance standards, considering the sensitive nature of the application.
-
-- **Monitoring and Logging:** Set up appropriate monitoring and logging mechanisms to track the performance and activities of the EC2 instance.
-
-## Further Assistance
-
-If you encounter any issues or require further guidance during the implementation process, refer to the Pulumi documentation or seek assistance from the Pulumi community and support channels.
-
-# Assignment 6
-
-This document serves as a comprehensive guide for setting up and configuring the web application. Please adhere to the following instructions to ensure a smooth deployment and effective implementation of the application.
-
-## Prerequisites
-
-Before starting the setup process, ensure you have the following prerequisites in place:
-
-1. An AWS account with sufficient permissions to create EC2 instances, RDS instances, and other required resources.
-2. Pulumi CLI installed and configured with appropriate credentials.
-3. Familiarity with Systemd or an alternative tool for configuring autorun.
-4. Understanding of managing cloud-init processes and userdata scripts on AWS.
-
-## Setup Process
-
-### 1. Launching the EC2 Instance and RDS
-
-Execute the Pulumi codebase to launch the EC2 instance and RDS. Verify that the web application's database is associated with the created RDS instance. Properly configure security groups and network settings for seamless communication between the EC2 instance and RDS.
-
-### 2. Configuring Autorun with Systemd
-
-Utilize Systemd or an alternative tool of your choice for configuring autorun. Ensure the service begins after the completion of cloud-init execution. Set it to be required or wanted by cloud-init instead of the standard multi-user. Refer to [this resource](https://serverfault.com/a/937723) for additional guidance on the process.
-
-### 3. Integration Tests Setup
-
-For integration tests in GitHub Actions, set up a local database on the EC2 instance for testing purposes. Configure the necessary scripts and environments within your GitHub Actions workflow to facilitate seamless integration testing.
-
-## Additional Recommendations
-
-- Regularly monitor application logs and AWS resources to ensure optimal functionality and performance.
-- Document any modifications made to the setup or configuration for future reference.
-- Adhere to security best practices and ensure secure storage and access of sensitive information.
-
-By following these instructions, you can successfully set up and manage the web application along with the necessary configurations for autorun and integration testing.
-
-test
-
-
+- If the Packer template fails the formatting check, the workflow exits with an error, indicating the need to format the template before pushing changes.
 
