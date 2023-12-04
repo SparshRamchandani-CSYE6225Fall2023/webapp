@@ -62,4 +62,4 @@ jobs:
         run: echo "AMI_ID=${{ steps.ami_build.outputs.AMI_ID }}" >> $GITHUB_ENV
 
       - name: Print AMI ID
-        run: echo $AMI_ID
+        run: echo "${{ env.AMI_ID }}"
