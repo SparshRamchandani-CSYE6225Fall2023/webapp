@@ -58,9 +58,9 @@ jobs:
           packer build debian12.pkr.hcl
        
 
-          - name: Configure AWS Credentials
-          uses: aws-actions/configure-aws-credentials@v1-node16
-          with:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
             aws-access-key-id: ${{ secrets.AWS_DEMO_ACCESS_KEY }}
             aws-secret-access-key: ${{ secrets.AWS_DEMO_SECRET_KEY }}
             aws-region: us-east-1
