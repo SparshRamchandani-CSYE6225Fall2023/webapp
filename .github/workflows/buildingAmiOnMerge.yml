@@ -55,8 +55,18 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          AMI_ID=$(packer build --var-file=./variables.pkrvars.hcl ./debian12.pkr.hcl | awk '/ami-/{print $NF; exit}')
-          echo $AMI_ID
-          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
-          echo "The AMI ID is: $AMI_ID"
-    
+          packer build debian12.pkr.hcl
+       
+
+      - name: Get Latest AMI ID
+        id: get_ami_id
+        run: |
+            # Use grep to extract the dynamic portion of the AMI name
+            DYNAMIC_PART=$(echo "packer-debian12-ami-1701395286" | grep -oE '[0-9]+')
+            
+            # Use the dynamic part in the AWS CLI command
+            AMI_ID=$(aws ec2 describe-images \
+              --filters "Name=name,Values=packer-debian12-ami-$DYNAMIC_PART" \
+              --query "Images | [0].ImageId" \
+              --output text)
+            echo "Latest AMI ID: $AMI_ID"
