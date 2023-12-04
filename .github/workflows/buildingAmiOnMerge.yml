@@ -60,3 +60,6 @@ jobs:
 
       - name: Store AMI ID
         run: echo "AMI_ID=${{ steps.ami_build.outputs.AMI_ID }}" >> $GITHUB_ENV
+
+      - name: Print AMI ID
+        run: echo $AMI_ID
