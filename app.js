@@ -11,7 +11,7 @@ const PORT= process.env.PORT || 3000;
 app.use(express.json());
 app.use("/healthz",appRoute);
 //app.use("/v2/assignments", assignmentRoute);
- app.use("/v1/assignments", assignmentRoute);
+ app.use("/v3/assignments", assignmentRoute);
 // app.use("/",(req,res)=>res.status(503).send())
 app.listen(PORT,(err)=>{
     logger.info("logs from app.js");
