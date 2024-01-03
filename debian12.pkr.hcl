@@ -19,7 +19,7 @@ variable "ssh_username" {
 
 variable ami_users {
   type    = list(string)
-  default = ["773453770225", "884433268858"]
+  default = ["default ownerID and the ownerID of the user that you want to share the AMI with"] //for example create the AMI in dev and share it with prod
 }
 
 variable aws_profile {
