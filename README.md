@@ -243,4 +243,7 @@ This job performs the following steps:
 - The `packer fmt -check` command is used to ensure consistent formatting of the Packer template.
 
 - If the Packer template fails the formatting check, the workflow exits with an error, indicating the need to format the template before pushing changes.
+- 
+
+test
 
